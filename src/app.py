@@ -11,14 +11,20 @@ from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
 
-# from models import Person
+from flask_bcrypt import Bcrypt
+from flask_jwt_extended import JWTManager
+
+from flask_mail import Mail
 
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../public/')
 app = Flask(__name__)
+
 app.url_map.strict_slashes = False
 
+
+jwt = JWTManager(app)
 # database condiguration
 db_url = os.getenv("DATABASE_URL")
 if db_url is not None:
@@ -30,6 +36,19 @@ else:
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 MIGRATE = Migrate(app, db, compare_type=True)
 db.init_app(app)
+
+# Configuración de Flask-Mail
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = 'babypractic@gmail.com'
+app.config['MAIL_PASSWORD'] = 'ybzq vfld dege gzei'
+app.config['MAIL_DEFAULT_SENDER'] = 'babypractic@gmail.com'
+
+# app.config['FRONTEND_URL'] = os.getenv('FRONTEND_URL')
+
+mail = Mail(app)
 
 # add the admin
 setup_admin(app)

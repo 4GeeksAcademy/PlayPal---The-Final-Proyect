@@ -1,0 +1,14 @@
+.card-container {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Tres columnas */
+  gap: 16px; /* Espacio entre las tarjetas */
+}
+  
+@media (max-width: 768px) {
+  .card-container {
+    grid-template-columns: 1fr; /* Una columna */
+    gap: 10px; /* Ajusta el espacio entre las tarjetas */
+    justify-items: center; /* Centra las tarjetas horizontalmente */
+  }
+}

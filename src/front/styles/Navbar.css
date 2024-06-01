@@ -1,0 +1,51 @@
+.navbar {
+    background-color: transparent; /* Fondo transparente */
+    box-shadow: none; /* Sin sombra */
+    padding: 10px 20px; /* Espaciado interno */
+    max-width: 1140px; /* Tamaño máximo */
+    margin: 0 auto; /* Centrar el navbar */
+}
+
+.navbar-brand {
+    font-size: 24px; /* Tamaño de fuente basado en el diseño */
+    color: #FFFFFF; /* Color de texto blanco */
+    font-weight: bold; /* Negrita para el logo */
+    text-decoration: none; /* Sin subrayado */
+}
+
+.nav-link {
+    font-size: 18px; /* Tamaño de fuente basado en el diseño */
+    color: #FFFFFF; /* Color de texto blanco */
+    transition: color 0.3s ease; /* Transición suave para el cambio de color */
+}
+
+.nav-link:hover {
+    color: #00BFFF; /* Cambia el color al pasar el mouse */
+}
+
+.btn-primary {
+    background-color: #007BFF; /* Color de fondo del botón */
+    color: #ffffff; /* Color de texto blanco */
+    padding: 10px 20px; /* Padding del botón */
+    border-radius: 5px; /* Bordes redondeados */
+    text-decoration: none; /* Sin subrayado */
+    transition: background-color 0.3s ease; /* Transición suave para el cambio de color */
+}
+
+.btn-primary:hover {
+    background-color: #0056b3; /* Cambia el color de fondo al pasar el mouse */
+}
+
+.navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.1); /* Cambia el color del borde del botón */
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba%28255, 255, 255, 1%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+@media (max-width: 767px) {
+    .navbar-nav {
+        text-align: center; /* Centrar enlaces en pantallas pequeñas */
+    }
+}

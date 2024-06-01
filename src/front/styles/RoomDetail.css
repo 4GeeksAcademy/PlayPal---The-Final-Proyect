@@ -1,0 +1,148 @@
+.room-detail {
+    background-color: #333C53;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    color: #fff;
+    max-width: 1114px;
+    margin: 0 auto;
+    max-height: 1500px;
+    font-family: 'Inter', sans-serif;
+}
+
+.room-detail-small {
+    max-height: 1500px; /* Altura más pequeña para usuarios que no son participantes ni host */
+    max-width: 1114px;
+    background-color: #333C53;
+    margin: 0 auto;
+    font-family: 'Inter', sans-serif;
+}
+.room-pills {
+    margin: 17px 0px 32px;
+    gap: 10px
+}
+
+.room-pills button {
+    background-color: #444C63;
+    border: none;
+    border-radius: 25px;
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.room-pills button.active {
+    background-color: #0096D2;
+}
+
+.room-pills button:hover {
+    background-color: #0056b3;
+}
+
+.back {
+    max-width: 1114px;
+    margin: auto;
+}
+.go-back {
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.room-header {
+    display: flex;
+    flex-wrap: wrap;
+    /* gap: 20px; */
+}
+.room-image {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    width: 100%;
+    height: auto;
+    padding: 0;
+    margin: 0;
+    max-height: 221.65px; /* Añadido: Establecer altura máxima */
+    object-fit: cover; /* Ajusta la imagen para cubrir el contenedor */
+    object-position: top; /* Muestra la parte superior de la imagen */
+}
+.room-content {
+    flex-grow: 1; /* Permite que el contenido crezca y ocupe disponible, empujando las acciones hacia abajo */
+    margin-bottom: auto; /* Empuja todo lo que sigue hacia abajo */
+
+    overflow-y: auto; /* Permite desplazarse si el contenido es demasiado largo */
+    
+}
+.room-info {
+    flex-grow: 1;
+}
+
+.room-info h1 {
+    margin-top: 0;
+    font-size: 24px;
+}
+
+.room-info p {
+    margin: 5px 0;
+}
+
+.room-actions {
+    display: flex;
+    justify-content: flex-end; /* Alinea los botones a la derecha */
+    align-items: center; /* Alinea los botones verticalmente en el centro si es necesario */
+    padding: 10px; /* Añade un poco de espacio alrededor de los botones */
+}
+
+.join-room {
+    background-color: #0096D2;
+    color: #fff;
+    border: none;
+    height: 48px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+.withdraw {
+    background-color:#B40000 ;
+    border: none;
+    height: 48px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+
+}
+
+.join-room:hover {
+    background-color: #0056b3;
+}
+
+.go-back, .join-room, .withdraw-request {
+    margin-left: 10px; /* Asegura un espaciado uniforme entre los botones */
+}
+
+.back-btn {
+    margin-right: 12px;
+    color: white;
+    padding: 10px 20px;
+    height: 48px;
+    border-color: #0096D2;
+}
+.back-btn:hover {
+    background-color: #0096D2;;
+}
+
+
+
+.exit-button {
+    color: #CED4DA;
+    margin: 0px 5px;
+    background: none;
+    border: none;
+    outline: none;
+    box-shadow: none;
+}

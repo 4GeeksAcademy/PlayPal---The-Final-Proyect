@@ -1,0 +1,14 @@
+.comments-section{
+    color: rgba(255, 255, 255, 0.70);
+    font-family: inter;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 150%; /* 24px */
+}
+.comment-box {
+    max-width: 950px;
+    background-color: white;
+
+}
+

@@ -1,0 +1,72 @@
+.login-page {
+    background-color: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%; /* Asegura que el contenedor ocupe el 100% del ancho disponible */
+    padding: 20px; /* Añade padding para cuando se vea en pantallas más pequeñas */
+}
+
+.login-title {
+    font-size: 36px;
+}
+
+.login-form {
+    background-color: none;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 100%;
+}
+
+.form-control {
+    background-color: #1e1e1e;
+    color: white;
+    width: 100%; /* Asegura que ocupe el 100% del contenedor disponible */
+    max-width: 428.5px; /* Ancho máximo para todas las pantallas */
+}
+
+.login-btn {
+    background-color: #0096D2;
+    color: white;
+    border: none;
+    width: 100%; /* Asegura que ocupe el 100% del contenedor disponible */
+    max-width: 428.5px; /* Ancho máximo para todas las pantallas */
+    padding: 10px 0; /* Añade padding vertical para hacer el botón más grande */
+    display: block; /* Asegura que el botón ocupe toda la línea disponible */
+}
+
+.login-btn:hover {
+    background-color: #333C53;
+}
+
+.password-toggle-icon {
+    cursor: pointer;
+    color: #007bff;
+}
+
+.password-toggle-icon:hover {
+    color: #0056b3;
+}
+
+.login-form p {
+    margin: 0;
+    padding: 0;
+}
+
+.larger-image {
+    position: relative;
+    left: -30px;
+    width: 100%;
+    height: auto;
+    max-width: 630.5px; /* Ajusta este valor según tus necesidades */
+    margin-left: 64px; /* Añade una separación de 64px a la izquierda */
+}
+
+@media (max-width: 768px) {
+    .larger-image {
+        left: 0;
+        margin-left: 0;
+        max-width: 100%;
+    }
+}
+        

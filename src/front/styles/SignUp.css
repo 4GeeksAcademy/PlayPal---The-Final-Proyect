@@ -1,0 +1,145 @@
+/* Estilos globales para el tema oscuro */
+/* body {
+    background-color: #343a40; 
+    color: #f8f9fa; 
+    font-family: 'Roboto', sans-serif;
+} */
+
+/* Contenedor principal para Login y Signup */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.auth-card {
+    background-color: #495057; /* Fondo de la tarjeta */
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    color: #f8f9fa; /* Color del texto */
+}
+
+.auth-card h4 {
+    color: #f8f9fa; /* Color del título */
+    margin-bottom: 20px;
+}
+
+.auth-card .form-label {
+    color: #f8f9fa; /* Color de las etiquetas de los formularios */
+}
+
+.auth-card .form-control {
+    background-color: #6c757d; /* Fondo de los inputs */
+    color: #f8f9fa; /* Color del texto de los inputs */
+    border: 1px solid #ced4da;
+}
+
+.auth-card .form-control:focus {
+    background-color: #6c757d; /* Fondo de los inputs en focus */
+    color: #f8f9fa; /* Color del texto de los inputs en focus */
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.auth-card .btn-primary {
+    background-color: #007bff; /* Color del botón */
+    border: none;
+    width: 100%;
+    padding: 10px;
+    margin-top: 20px;
+}
+
+.auth-card .btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.auth-card .invalid-feedback {
+    color: #e74c3c; /* Color de los mensajes de error */
+}
+
+.auth-card .alert-danger {
+    color: #f8f9fa;
+    background-color: #e74c3c; /* Fondo del mensaje de error */
+    border-color: #e74c3c;
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.auth-footer a {
+    color: #007bff; /* Color de los enlaces */
+}
+
+.auth-footer a:hover {
+    color: #0056b3;
+}
+
+.dot-flashing-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dot-flashing {
+    position: relative;
+    width: 10px;
+    height: 10px;
+    margin: 0 5px;
+    border-radius: 50%;
+    background-color: #007bff;
+    animation: dot-flashing 1s infinite linear alternate;
+}
+
+.dot-flashing::before,
+.dot-flashing::after {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #007bff;
+}
+
+.dot-flashing::before {
+    left: -20px;
+    animation: dot-flashing 1s infinite linear alternate;
+    animation-delay: -.33s;
+}
+
+.dot-flashing::after {
+    left: 20px;
+    animation: dot-flashing 1s infinite linear alternate;
+    animation-delay: 0.33s;
+}
+
+@keyframes dot-flashing {
+    0% {
+        background-color: #007bff;
+    }
+    50%,
+    100% {
+        background-color: #f8f9fa;
+    }
+}
+
+.password-wrapper {
+    position: relative;
+}
+
+.password-toggle-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #bdbfc1;
+}
+
+

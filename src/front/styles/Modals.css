@@ -1,0 +1,39 @@
+.modal-content {
+  background-color: #333c53;
+  color: #fff; /* Aseguramos que el texto sea legible */
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.modal {
+  background-color: #1e1e1e8c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.favorite-plat {
+  max-width: 798px;
+  width: 100%;
+  height: auto;
+  max-height: none; /* Permite que el modal crezca en altura si es necesario */
+  transition: height 0.3s ease;
+}
+
+.btn-close {
+  color: white;
+}
+
+.form-select {
+  background-color: #1e1e1e;
+}
+
+/* Media query para pantallas pequeñas */
+@media (max-width: 768px) {
+  .favorite-plat {
+    width: 100%;
+    height: auto;
+    max-height: none; /* Permite que el modal crezca en altura si es necesario */
+  }
+}

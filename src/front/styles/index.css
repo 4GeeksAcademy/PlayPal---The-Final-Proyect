@@ -1,3 +1,42 @@
-/* 
-    General Styles used on every website (Don't Repeat Yourself)
-*/
+/* Estilos generales para Playpal */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Nunito&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+@import url("https://use.typekit.net/mog2peh.css");
+
+
+body {
+    background: linear-gradient(to bottom, #000000, #131E26, #3B5F79, #629DC8);
+    
+    background-attachment: fixed; /* Ensure the background stays fixed while scrolling */
+    overflow-x: hidden;
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    color: white;
+    height: 100vh;
+}
+
+
+.room {
+    color: black;
+    width: 1114px
+}
+
+.home-container {
+    padding: 20px;
+}
+
+.home-header {
+    margin-bottom: 20px;
+}
+
+.main-title {
+    font-family: "termina", sans-serif;
+    font-size: 40px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+}
+
+.create-room-button {
+    margin-left: auto;
+    /* Para alinear el botón a la derecha */
+}

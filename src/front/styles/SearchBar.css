@@ -1,0 +1,88 @@
+.search-bar {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    width: 820px;
+    background-color:  #A9ABAD42;; /* Color de fondo basado en el diseño */
+    border-radius: 6px; /* Bordes redondeados */
+    border: 1px solid #ffffffa2;
+    gap: 0; /* Remove gap between elements */
+}
+
+
+.search-input {
+    flex: 1;
+    padding: 8px 16px; /* Adjusted padding */
+    border: none;
+    border-radius: 6px 0 0 6px; /* Rounded corners on the left */
+    background-color: rgba(169, 171, 173, 0.26); /* Color de fondo basado en el diseño */
+    color: #ffffff; /* Color de texto blanco */
+    outline: none;
+}
+
+.search-input::placeholder{
+    color: #ffffffe9
+}
+
+.dropdown {
+    margin-left: -1px; /* Remove any gap between the input and the dropdown */
+}
+
+.dropdown-toggle {
+    width: 157px; /* Fixed width for the dropdown button */
+    padding: 8px 16px; /* Adjust padding to match the input field */
+    border-radius: 0 6px 6px 0; /* Rounded corners on the right */
+    background-color: #757575; /* Default background color for the button */
+    color: #ffffff; /* Color de texto blanco */
+    border: 1px solid #757575; /* Match the border color */
+    border-left: none; /* Remove the left border */
+    outline: none; /* Ensure no outline on focus */
+    display: flex; /* Use flexbox to align text and arrow */
+    justify-content: space-between; /* Space between text and arrow */
+    align-items: center; /* Center items vertically */
+}
+
+.dropdown-toggle:focus,
+.dropdown-toggle:active,
+.dropdown-toggle.show {
+    padding: 8px 16px; /* Ensure padding remains consistent */
+    border: 1px solid #757575; /* Match the border color */
+    border-left: none; /* Remove the left border */
+    background-color: #757575; /* Maintain default background color */
+    box-shadow: none; /* Remove the default focus shadow */
+}
+
+.dropdown-menu {
+    background-color: #757575; /* Match the background color */
+    color: #ffffff; /* Match the text color */
+    padding: 0; /* Remove padding */
+    margin: 0; /* Remove margin */
+    border-radius: 0 0 6px 6px; /* Rounded bottom corners */
+}
+
+.dropdown-menu .dropdown-item {
+    background-color: #757575; /* Default background color */
+    color: #ffffff; /* Default text color */
+    padding: 8px 16px; /* Add consistent padding */
+    margin: -2px 0px 0px 0px; /* Remove margin */
+}
+
+.dropdown-menu .dropdown-item:hover {
+    background-color: #333C53; /* Hover background color */
+    color: #ffffff; /* Hover text color */
+}
+
+.dropdown-menu .dropdown-item.active,
+.dropdown-menu .dropdown-item:active {
+    background-color: #0096D2; /* Selected background color */
+    color: #ffffff; /* Selected text color */
+}
+
+.dropdown-toggle .dropdown-title {
+    flex: 1;
+    text-align: left; /* Align text to the left */
+}
+
+.dropdown-toggle .dropdown-arrow {
+    text-align: right; /* Align arrow to the right */
+}

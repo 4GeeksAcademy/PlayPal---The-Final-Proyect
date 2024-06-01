@@ -1,0 +1,8 @@
+/* En tu archivo SignUp.css */
+.profile-image {
+    border-radius: 50%;
+    width: 100px; /* Ajusta el tamaño según sea necesario */
+    height: 100px; /* Ajusta el tamaño según sea necesario */
+    object-fit: cover;
+}
+
