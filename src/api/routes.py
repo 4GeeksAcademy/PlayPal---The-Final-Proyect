@@ -8,6 +8,7 @@ from flask_jwt_extended import create_access_token, JWTManager, jwt_required, ge
 from datetime import timedelta
 import re
 import os
+from datetime import datetime, timedelta
 
 from sqlalchemy.exc import SQLAlchemyError
 import jwt
@@ -27,6 +28,9 @@ s = URLSafeTimedSerializer("YourSecretKey")
 # Allow CORS requests to this API
 CORS(api)
 bcrypt = Bcrypt()
+
+current_time = datetime.now()
+print("Current time:", current_time)
 
 @api.route('/hello', methods=['POST', 'GET'])
 def handle_hello():
@@ -282,16 +286,29 @@ def create_room():
         room_data = request.json
         
         # Verificar que todos los campos necesarios estén presentes
-        required_fields = ['date', 'time', 'room_name', 'game_id', 'platform', 'description', 'mood', 'room_size']
+        required_fields = ['date', 'time', 'duration', 'room_name', 'game_id', 'platform', 'description', 'mood', 'room_size']
         for field in required_fields:
             if field not in room_data or not room_data[field]:
                 return jsonify({"error": f"Missing required field: {field}"}), 400
-        
+        # Convertir la fecha y hora de inicio proporcionada en objeto datetime
+        start_datetime = datetime.strptime(f"{room_data.get('date')} {room_data.get('time')}", '%Y-%m-%d %H:%M')
+
+        # Obtener la fecha y hora actual
+        current_datetime = datetime.now()
+
+        current_time = datetime.now()
+        print("Current time:", current_time)
+
+        # Verificar que la fecha de inicio no sea anterior a la fecha actual
+        if start_datetime < current_datetime:
+            return jsonify({"error": "The start time cannot be in the past."}), 400
+
         # Crear una nueva instancia de Room con los datos proporcionados
         new_room = Room(
             user_id=current_user_id,  # Asignar al usuario actual como el anfitrión de la sala
             date=room_data.get('date'),
             time=room_data.get('time'),
+            duration=int(room_data.get('duration')),  # Asegúrate de convertir la duración a entero
             room_name=room_data.get('room_name'),
             game_id=room_data.get('game_id'),
             platform=room_data.get('platform'),
@@ -308,6 +325,7 @@ def create_room():
     
     except Exception as e:
         return jsonify({"message": "Failed to create room", "error": str(e)}), 500
+
     
 
 @api.route('/create_game', methods=['POST'])

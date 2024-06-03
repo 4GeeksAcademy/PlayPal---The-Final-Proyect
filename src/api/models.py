@@ -1,4 +1,6 @@
+from datetime import datetime, timedelta
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import event
 
 db = SQLAlchemy()
 
@@ -58,8 +60,10 @@ class User(db.Model):
 class Room(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    date = db.Column(db.String)
-    time = db.Column(db.String)
+    date = db.Column(db.String)  # Fecha de inicio del juego
+    time = db.Column(db.String)  # Hora de inicio del juego
+    duration = db.Column(db.Integer)  # Duración en minutos
+    end_time = db.Column(db.String)  # Hora estimada de finalización
     room_name = db.Column(db.String(80), nullable=False)
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
     platform = db.Column(db.String, nullable=False)
@@ -77,12 +81,25 @@ class Room(db.Model):
     def __repr__(self):
         return f'<Room {self.id}>'
 
+    def calculate_end_time(self):
+        """Calculates and sets the estimated end time based on duration."""
+        print("Calculating end time...")
+        print("Date:", self.date)
+        print("Time:", self.time)
+        print("Duration:", self.duration)
+        if self.date and self.time and self.duration:
+            start_datetime = datetime.strptime(f'{self.date} {self.time}', '%Y-%m-%d %H:%M')
+            end_datetime = start_datetime + timedelta(minutes=self.duration)
+            self.end_time = end_datetime.strftime('%Y-%m-%d %H:%M')
+            print("Calculated end_time:", self.end_time)
+
     def serialize(self):
         return {
             "room_id": self.id,
             "user_id": self.user_id,
             "date": self.date,
             "time": self.time,
+            "end_time": self.end_time,
             "room_name": self.room_name,
             "game_id": self.game_id,
             "platform": self.platform,
@@ -92,6 +109,22 @@ class Room(db.Model):
             "room_size": self.room_size,
             "is_deleted": self.is_deleted
         }
+    
+# Event listeners for SQLAlchemy to auto-calculate `end_time`
+    @classmethod
+    def before_insert(cls, mapper, connection, target):
+        """Listen for the 'before_insert' event and calculate end time."""
+        print("Before insert event triggered")
+        target.calculate_end_time()
+
+    @classmethod
+    def before_update(cls, mapper, connection, target):
+        """Listen for the 'before_update' event and calculate end time."""
+        print("Before update event triggered")
+        target.calculate_end_time()
+# Event listeners for SQLAlchemy to auto-calculate `end_time`
+event.listen(Room, 'before_insert', Room.before_insert)
+event.listen(Room, 'before_update', Room.before_update)
     
 class Games(db.Model):
     id = db.Column(db.Integer, primary_key=True)
