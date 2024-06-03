@@ -3,7 +3,7 @@
     align-items: center;
     padding: 0;
     width: 820px;
-    background-color:  #A9ABAD42;; /* Color de fondo basado en el diseño */
+    background-color:  #A9ABAD42; /* Color de fondo basado en el diseño */
     border-radius: 6px; /* Bordes redondeados */
     border: 1px solid #ffffffa2;
     gap: 0; /* Remove gap between elements */
@@ -25,6 +25,7 @@
 }
 
 .dropdown {
+    padding: 0px;
     margin-left: -1px; /* Remove any gap between the input and the dropdown */
 }
 
@@ -32,7 +33,7 @@
     width: 157px; /* Fixed width for the dropdown button */
     padding: 8px 16px; /* Adjust padding to match the input field */
     border-radius: 0 6px 6px 0; /* Rounded corners on the right */
-    background-color: #757575; /* Default background color for the button */
+    background-color: #A9ABAD42; /* Default background color for the button */
     color: #ffffff; /* Color de texto blanco */
     border: 1px solid #757575; /* Match the border color */
     border-left: none; /* Remove the left border */

@@ -38,19 +38,19 @@ export const LogIn = () => {
             <div className="row align-items-center justify-content-center">
                 <div className="col-lg-6 col-md-8 col-sm-10 py-1 d-flex flex-column align-items-center">
                     <div className="login-form pb-1 rounded-1 col-12 d-flex flex-column align-items-center">
-                        <div className="col-12 d-flex flex-column align-items-center">
-                            <div className="col-12 text-center">
-                                <p className="login-title text-white fs-2 fw-medium font-family-Inter col-12 m-0 px-3 py-2">Find Pals to Play Today!</p>
+                        <div className="col-12 d-flex flex-column mb-4 align-items-start align-title">
+                            <div className="col-12 text-left">
+                                <p className="login-title text-white fs-2 fw-medium font-family-Inter col-12 m-0">Find Pals to Play Today!</p>
                             </div>
-                            <div className="col-12 text-center">
-                                <p className="text-white fs-6 fw-normal font-family-Inter col-12 m-0 px-3 py-2">Please sign in or create an account to start</p>
+                            <div className="col-12 text-left">
+                                <p className="text-white fs-6 fw-normal font-family-Inter col-12 m-0">Please sign in or create an account to start</p>
                             </div>
                         </div>
                         <form className="col-12 d-flex flex-column align-items-center" onSubmit={handleSubmit}>
                             <div className="col-12 mb-3">
-                                <label className="text-white fs-6 fw-normal font-family-Inter col-12 m-0 px-3 py-2" htmlFor="email">Email Address</label>
+                                <label className="text-white fs-6 fw-normal font-family-Inter col-12 m-0" htmlFor="email">Email Address</label>
                                 <div className="rounded-1 col-12 align-items-center">
-                                    <div className="px-1 py-1 bg-dark rounded-1 border border-1 border-primary col-12 align-items-center d-flex">
+                                    <div className="py-1 bg-dark rounded-1 border border-1 border-primary col-12 align-items-center d-flex position-relative" style={{ maxWidth: '430px' }}>
                                         <input
                                             type="email"
                                             id="email"
@@ -63,9 +63,9 @@ export const LogIn = () => {
                                 </div>
                             </div>
                             <div className="col-12 mb-3">
-                                <label className="text-white fs-6 fw-normal font-family-Inter col-12 m-0 px-3 py-2" htmlFor="password">Password</label>
+                                <label className="text-white fs-6 fw-normal font-family-Inter col-12 m-0" htmlFor="password">Password</label>
                                 <div className="rounded-1 col-12 align-items-center">
-                                    <div className="px-1 py-1 bg-dark rounded-1 border border-1 border-primary col-12 align-items-center d-flex">
+                                    <div className=" py-1 bg-dark rounded-1 border border-1 border-primary col-12 align-items-center d-flex position-relative" style={{ maxWidth: '430px' }}>
                                         <input
                                             type={showPassword ? "text" : "password"}
                                             id="password"
@@ -73,9 +73,8 @@ export const LogIn = () => {
                                             className="form-control bg-dark text-white border-0"
                                             onChange={handleInputChange}
                                             required
-
                                         />
-                                        <span className="password-toggle-icon" onClick={() => setShowPassword(!showPassword)}>
+                                        <span className="password-toggle-icon position-absolute" onClick={() => setShowPassword(!showPassword)}>
                                             {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
                                         </span>
                                     </div>
@@ -91,11 +90,11 @@ export const LogIn = () => {
                             </div>
                         </form>
                         <div className="col-12 text-center">
-                            <p className="col-12 m-0 px-3 py-2">
+                            <p className="col-12 m-0">
                                 <span className="text-white fs-6 fw-normal font-family-Inter">Don’t have an account? </span>
                                 <Link to="/signup" className="text-white fs-6 fw-normal font-family-Inter text-decoration-underline">create a new account</Link>
                             </p>
-                            <p className="col-12 m-0 px-3 py-2">
+                            <p className="col-12 m-0">
                                 <span className="text-white fs-6 fw-normal font-family-Inter">Forgot your password? </span>
                                 <Link to="/forgot-password" className="text-white fs-6 fw-normal font-family-Inter text-decoration-underline">Reset it here</Link>
                             </p>

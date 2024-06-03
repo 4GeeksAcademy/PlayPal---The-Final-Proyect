@@ -3,6 +3,9 @@ import { Context } from '../store/appContext';
 import PersonalInfoModal from './PersonalInfoModal.jsx';
 import FavoritePlatformModal from './FavoritePlatformModal.jsx';
 import ProfileSetupModal from './ProfileSetupModal.jsx';
+import { showSuccessAlert } from './alerts.js';
+import { showErrorAlert } from './alerts.js';
+import '../../styles/Alerts.css';
 
 const SignUpModals = ({ handleClose }) => {
     const { actions } = useContext(Context);
@@ -48,11 +51,13 @@ const SignUpModals = ({ handleClose }) => {
             setLoading(true);
             let success = await actions.submitSignUpForm(signUpData);
             if (success) {
-                handleClose();
+                showSuccessAlert('Success', 'Your account has been created successfully.', handleClose);
             } else {
+                showErrorAlert( handleClose);
                 setError('Failed to create user. Please try again.');
             }
         } catch (error) {
+            showErrorAlert(handleClose);
             setError('An unexpected error occurred. Please try again.');
         } finally {
             setLoading(false);

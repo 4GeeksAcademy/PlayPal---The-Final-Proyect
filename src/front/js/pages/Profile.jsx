@@ -230,7 +230,7 @@ export const Profile = () => {
             </p>
             <div className="mb-3 row" style={{ marginLeft: '25px', marginRight: '25px' }}>
                 {profileData.url_image && (
-                    <img src={profileData.url_image} alt="Profile" className="profile-image" />
+                    <img src={profileData.url_image} alt="Profile" className="profile-image" style={{ width: '100px', height: '100px' }} />
                 )}
                 <div className="col" style={{ marginLeft: '25px', marginTop: '20px' }}>
                     {!imageSrc ? (
@@ -243,7 +243,7 @@ export const Profile = () => {
                                 style={{ display: 'none' }}
                                 className="form-control"
                             />
-                            <button className="join-room" onClick={() => document.getElementById('fileInput').click()}>
+                            <button className="join-room btn-secondary" onClick={() => document.getElementById('fileInput').click()}>
                                 Edit Profile Picture
                             </button>
                         </>

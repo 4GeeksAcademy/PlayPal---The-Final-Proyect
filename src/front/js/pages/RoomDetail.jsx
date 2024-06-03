@@ -10,10 +10,12 @@ import playstationIcon from '../../img/playstation.png';
 import pcIcon from '../../img/pc.png';
 import { IoExitOutline } from "react-icons/io5";
 import { FaUser } from 'react-icons/fa';
+import { FaPencilAlt } from 'react-icons/fa'; // Import the pencil icon
 import '../../styles/RoomDetail.css';
 import RoomDetailsView from '../component/RoomInfoComponent.jsx';
 import ParticipantsView from '../component/ParticipantsInfoComponent.jsx';
 import CommentsSection from '../component/CommentsSection.jsx';
+
 
 export const RoomDetail = () => {
     const { store, actions } = useContext(Context);
@@ -354,10 +356,16 @@ export const RoomDetail = () => {
                             </p>
                         </div>
                         {isHost && (
-                            <div className="room-pills ">
-                                <button className={`pill-detail ${currentView === 'details' ? 'active' : ''}`} onClick={() => handleToggleView('details')}>Room Details</button>
-                                <button className={`pill-participants mx-2 ${currentView === 'participants' ? 'active' : ''}`} onClick={() => handleToggleView('participants')}>
-                                    Members & Requests ({countPendingRequests()})
+                            <div className="room-pills d-flex align-items-center justify-content-between">
+                                <div>
+                                    <button className={`pill-detail ${currentView === 'details' ? 'active' : ''}`} onClick={() => handleToggleView('details')}>Room Details</button>
+                                    <button className={`pill-participants mx-2 ${currentView === 'participants' ? 'active' : ''}`} onClick={() => handleToggleView('participants')}>
+                                        Members & Requests ({countPendingRequests()})
+                                    </button>
+                                </div>
+
+                                <button className="edit-room-btn mx-2" onClick={() => navigate(`/edit-room/${room.room_id}`)} style={{ background: 'none', border: 'none' }}>
+                                    <FaPencilAlt style={{ color: 'white', fontSize: '20px' }} />
                                 </button>
                             </div>
                         )}
