@@ -312,7 +312,7 @@ def create_room():
 
 @api.route('/create_game', methods=['POST'])
 @jwt_required()
-def create_game():
+def create_games():
     try:
         # Obtener el ID de usuario del token de acceso
         current_user_id = get_jwt_identity()
@@ -322,30 +322,31 @@ def create_game():
         if not current_user or not current_user.admin:
             return jsonify({"error": "Only admins can create games."}), 403
 
-        game_data = request.json
-        print("Datos recibidos en la solicitud:", game_data)
+        games_data = request.json
+        # Asegurar que games_data sea una lista si no lo es
+        if not isinstance(games_data, list):
+            games_data = [games_data]
 
-        name = game_data.get('name')
+        for game_data in games_data:
+            name = game_data.get('name')
+            if not name:
+                continue  # Saltar este juego si no tiene nombre
 
-        if not name:
-            return jsonify({"error": "Missing required field: name"}), 400
+            # Verificar si el juego ya existe
+            existing_game = Games.query.filter_by(name=name).first()
+            if existing_game:
+                continue  # Saltar este juego si ya existe
 
-        existing_game = Games.query.filter_by(name=name).first()
-        if existing_game:
-            return jsonify({'error': 'Game already exists.'}), 409
+            new_game = Games(name=name)
+            db.session.add(new_game)
 
-        new_game = Games(
-            name=name
-        )
-
-        db.session.add(new_game)
         db.session.commit()
+        return jsonify({"message": "Games processed"}), 201
 
-        return jsonify({"message": "Game created successfully", "game": new_game.serialize()}), 201
-    
     except Exception as e:
         print(str(e))
-        return jsonify({"message": "Failed to create game", "error": str(e)}), 500
+        return jsonify({"message": "Failed to process games", "error": str(e)}), 500
+
     
 
 # Para obtener un room de un user particular-------------------------------------------------------------------------------------------
