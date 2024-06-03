@@ -1051,7 +1051,5 @@ def update_participant_status(room_id):
         print(f"Exception: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
-    except Exception as e:
-        print(f"Exception: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+
 
