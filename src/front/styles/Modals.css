@@ -1,5 +1,5 @@
 .modal-content {
-  background-color: #333c53;
+  background-color:  #2F313A;
   color: #fff; /* Aseguramos que el texto sea legible */
   display: flex;
   flex-direction: column;
@@ -25,6 +25,7 @@
   color: white;
 }
 
+
 .form-select {
   background-color: #1e1e1e; /* Fondo oscuro cuando está inactivo */
   color: white; /* Texto blanco para contraste */
@@ -42,6 +43,7 @@
   background-color: white; /* Intenta establecer un fondo claro para las opciones */
   color: #333c53; /* Texto oscuro para las opciones */
 }
+
 
 /* Media query para pantallas pequeñas */
 @media (max-width: 768px) {

@@ -221,33 +221,30 @@ def get_current_rooms():
             participants = []
             for participant in room.room_participants:
                 user = User.query.get(participant.user_id)
-                platform = None
                 platform_id = None
-                if user.xbox:
-                    platform = "xbox"
+
+                # Verificar la plataforma de la sala y asignar la plataforma_id correcta
+                if room.platform.lower() == 'xbox' and user.xbox:
                     platform_id = user.xbox
-                elif user.psn:
-                    platform = "psn"
+                elif room.platform.lower() == 'playstation' and user.psn:
                     platform_id = user.psn
-                elif user.steam:
-                    platform = "steam"
+                elif room.platform.lower() == 'steam' and user.steam:
                     platform_id = user.steam
-                elif user.discord:
-                    platform = "discord"
+                elif room.platform.lower() == 'discord' and user.discord:
                     platform_id = user.discord
-                elif user.nintendo:
-                    platform = "nintendo"
+                elif room.platform.lower() == 'nintendo' and user.nintendo:
                     platform_id = user.nintendo
-                elif user.epic_id:
-                    platform = "epic_id"
+                elif room.platform.lower() == 'epic_id' and user.epic_id:
                     platform_id = user.epic_id
 
                 participants.append({
                     "participant_id": user.id,
                     "participant_name": user.username,
+                    "profile_image_url": user.url_image,  # Incluir la URL de la imagen de perfil
                     "confirmed": participant.confirmed,
-                    "platform": platform,
-                    "platform_id": platform_id  # Incluir la ID de la plataforma
+                    "platform": room.platform,
+                    "platform_id": platform_id,
+                    "discord_id": user.discord  # Incluir la ID de Discord
                 })
 
             serialized_room = {
@@ -623,11 +620,15 @@ def join_room(room_id):
 
         # Comprobar si el usuario tiene la plataforma correspondiente
         if room.platform != 'All':
-            if room.platform == 'PC':
+            platform_to_check = room.platform.lower()
+            if platform_to_check == 'pc':
                 if not (current_user.steam or current_user.epic_id):
                     return jsonify({"error": "You do not have a PC ID (Steam or Epic) associated with your profile"}), 400
+            elif platform_to_check in ['playstation', 'psn']:
+                if not current_user.psn:
+                    return jsonify({"error": "You do not have a PlayStation ID associated with your profile"}), 400
             else:
-                if not getattr(current_user, room.platform.lower(), None):
+                if not getattr(current_user, platform_to_check, None):
                     return jsonify({"error": f"You do not have a {room.platform} ID associated with your profile"}), 400
         
         # Verificar si la solicitud ya existe
@@ -639,16 +640,20 @@ def join_room(room_id):
                 return jsonify({"message": "Rejoin request sent successfully", "request": existing_request.serialize()}), 200
             else:
                 return jsonify({"error": "Request already exists"}), 400
-        
-        # Crear nueva solicitud
-        new_request = Room_request(room_id=room_id, user_id=current_user_id, status='pending')
+
+        # Crear nueva solicitud de entrada
+        new_request = Room_request(
+            room_id=room_id,
+            user_id=current_user_id,
+            status='pending'
+        )
         db.session.add(new_request)
         db.session.commit()
-        
-        return jsonify({"message": "Request to join room sent successfully", "request": new_request.serialize()}), 200
-    
+
+        return jsonify({"message": "Join request sent successfully", "request": new_request.serialize()}), 201
+
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e), "message": "An error occurred while sending join request"}), 500
 
 #-----------------------------------PENDING "JOIN" REQUEST-------------------------------------------------
 
