@@ -6,10 +6,17 @@ from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from api.utils import APIException, generate_sitemap
-from api.models import db
+from api.models import db, Room
 from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
+
+from apscheduler.schedulers.background import BackgroundScheduler
+from datetime import datetime
+import logging
+import pytz
+from pytz import timezone
+
 
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
@@ -23,8 +30,8 @@ app = Flask(__name__)
 
 app.url_map.strict_slashes = False
 
-
 jwt = JWTManager(app)
+
 # database condiguration
 db_url = os.getenv("DATABASE_URL")
 if db_url is not None:
@@ -49,6 +56,19 @@ app.config['MAIL_DEFAULT_SENDER'] = 'babypractic@gmail.com'
 # app.config['FRONTEND_URL'] = os.getenv('FRONTEND_URL')
 
 mail = Mail(app)
+
+# Configuración de bcrypt
+bcrypt = Bcrypt(app)
+
+# Configurar el logging
+logging.basicConfig(level=logging.INFO, filename='room_expiration_log.log', filemode='a', format='%(asctime)s - %(levelname)s - %(message)s')
+
+console = logging.StreamHandler()
+console.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+console.setFormatter(formatter)
+logging.getLogger('').addHandler(console)
+
 
 # add the admin
 setup_admin(app)
@@ -85,6 +105,7 @@ def serve_any_other_file(path):
     response = send_from_directory(static_file_dir, path)
     response.cache_control.max_age = 0  # avoid cache memory
     return response
+
 
 
 # this only runs if `$ python src/main.py` is executed

@@ -1,6 +1,8 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Context } from "../store/appContext";
 import { useNavigate } from 'react-router-dom';
+import moment from 'moment-timezone';
+
 import { showSuccessAlert, showErrorAlert } from '../component/alerts.js';
 import '../../styles/Alerts.css'; // Importa las funciones de alerta
 export const CreateRoom = () => {
@@ -14,7 +16,9 @@ export const CreateRoom = () => {
         platform: '',
         description: '',
         mood: '',
-        room_size: 4 
+        room_size: 4,
+        user_timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        duration: ''  // Agregar este campo
     });
     const [error, setError] = useState(null);
     const navigate = useNavigate();
@@ -31,6 +35,23 @@ export const CreateRoom = () => {
         e.preventDefault();
 
         const selectedGame = store.games.find(game => game.name === roomData.game_id);
+
+        console.log('Selected game is:', selectedGame);
+        const gameId = selectedGame.game_id;
+        console.log(gameId);
+
+        // Convert date and time to UTC
+        const localDateTime = `${roomData.date} ${roomData.time}`;
+        const userTimezone = roomData.user_timezone;
+        const utcDateTime = moment.tz(localDateTime, userTimezone).utc().format('YYYY-MM-DD HH:mm');
+
+        // Validate that utcDateTime is not in the past
+        const currentUtcTime = moment.utc().format('YYYY-MM-DD HH:mm');
+        if (utcDateTime < currentUtcTime) {
+            setError('The start time cannot be in the past.');
+            return;
+        }
+
         if (!selectedGame) {
             setError('Invalid game selected. Please try again.');
             return;
@@ -38,11 +59,14 @@ export const CreateRoom = () => {
         console.log('Selected game is:', selectedGame);
         const gameId = selectedGame.game_id;
         console.log(gameId);
+
         const formattedRoomData = {
             ...roomData,
             game_id: gameId,
             date: roomData.date.toString(),
-            time: roomData.time.toString()
+            time: roomData.time.toString(),
+            user_timezone: roomData.user_timezone,
+            utc_start_time: utcDateTime  // Adding the UTC start time
         };
         console.log('FORMATTED ROOMDATA', formattedRoomData);
         const success = await actions.createRoom(formattedRoomData);
@@ -54,7 +78,6 @@ export const CreateRoom = () => {
     };
 
     useEffect(() => {
-        // Cleanup function to avoid setting state on unmounted component
         return () => {
             setRoomData({
                 room_name: '',
@@ -64,7 +87,9 @@ export const CreateRoom = () => {
                 platform: '',
                 description: '',
                 mood: '',
-                room_size: 4 // Default room size
+                room_size: 4,
+                user_timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                duration: ''  // Agregar este campo
             });
             setError(null);
         };
@@ -102,10 +127,16 @@ export const CreateRoom = () => {
                                 required
                             >
                                 <option value="">Select a game</option>
+
+                                {store.games.map(game => (
+                                    <option key={game.id} value={game.name}>{game.name}</option>
+                                ))}
+
                                 {sortedGames.map(game => (
                                     <option key={game.game_id} value={game.name}>{game.name}</option>
                                 ))}
                                 <option value="Other">Other</option> {/* Option Other is always present */}
+
                             </select>
                         </div>
                         <div className="mb-3">
@@ -133,6 +164,20 @@ export const CreateRoom = () => {
                             />
                         </div>
                         <div className="mb-3">
+
+                            <label htmlFor="duration" className="form-label">Duration (minutes)</label>
+                            <input
+                                type="number"
+                                className="form-control"
+                                id="duration"
+                                name="duration"
+                                value={roomData.duration}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                        <div className="mb-3">
+
                             <label htmlFor="platform" className="form-label">Platform</label>
                             <select
                                 className="form-control"
@@ -146,6 +191,9 @@ export const CreateRoom = () => {
                                 <option value="Xbox">Xbox</option>
                                 <option value="PlayStation">PlayStation</option>
                                 <option value="PC">PC</option>
+
+                                <option value="Google Play">Google Play</option>
+
                                 <option value="Nintendo">Nintendo</option>
                             </select>
                         </div>
