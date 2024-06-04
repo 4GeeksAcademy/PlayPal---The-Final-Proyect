@@ -542,6 +542,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
+
             getComments: async (roomId) => {
                 const token = localStorage.getItem('jwt-token');
                 if (!token) return [];
@@ -562,6 +563,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     return [];
                 }
             },
+
             addComment: async (roomId, content, isHost) => {
                 const token = localStorage.getItem('jwt-token');
                 if (!token) {
@@ -585,6 +587,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     return false;
                 }
             },
+            
             updateParticipantStatus: async (roomId, participantId, status) => {
                 const token = localStorage.getItem('jwt-token');
                 if (!token) {

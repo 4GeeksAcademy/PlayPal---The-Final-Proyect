@@ -1,7 +1,8 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Context } from "../store/appContext";
 import { useNavigate } from 'react-router-dom';
-
+import { showSuccessAlert, showErrorAlert } from '../component/alerts.js';
+import '../../styles/Alerts.css'; // Importa las funciones de alerta
 export const CreateRoom = () => {
     const { store, actions } = useContext(Context);
     const token = localStorage.getItem('jwt-token');
@@ -46,9 +47,9 @@ export const CreateRoom = () => {
         console.log('FORMATTED ROOMDATA', formattedRoomData);
         const success = await actions.createRoom(formattedRoomData);
         if (success) {
-            navigate('/');
+            showSuccessAlert('Success', 'Room Created Successfully', () => navigate('/'));
         } else {
-            setError('Failed to create room. Please try again.');
+            showErrorAlert('Error', 'Something went wrong.');
         }
     };
 

@@ -1,0 +1,11 @@
+.custom-confirm-button {
+  background-color: #0096D2 !important;
+  color: white !important;
+  border: none;
+}
+
+.custom-error-button {
+  background-color: #B40000 !important;
+  color: white !important;
+  border: none;
+}

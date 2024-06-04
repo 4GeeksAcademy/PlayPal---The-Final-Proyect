@@ -78,7 +78,7 @@ export const Navbar = () => {
                                         <Link to="/login" className="nav-link">Login</Link>
                                     </li>
                                     <li className="nav-item">
-                                        <button onClick={handleSignUpClick} className="btn btn-primary nav-link">Create account</button>
+                                        <button onClick={handleSignUpClick} className="join-room nav-link">Create account</button>
                                     </li>
                                 </>
                             )}

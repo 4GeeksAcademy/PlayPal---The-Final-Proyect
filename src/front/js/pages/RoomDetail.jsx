@@ -10,10 +10,13 @@ import playstationIcon from '../../img/playstation.png';
 import pcIcon from '../../img/pc.png';
 import { IoExitOutline } from "react-icons/io5";
 import { FaUser } from 'react-icons/fa';
+import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa'; // Import the pencil and trash icons
 import '../../styles/RoomDetail.css';
 import RoomDetailsView from '../component/RoomInfoComponent.jsx';
 import ParticipantsView from '../component/ParticipantsInfoComponent.jsx';
 import CommentsSection from '../component/CommentsSection.jsx';
+import { showRoomRequestSentAlert, showErrorAlert, showAutoCloseAlert, showLeaveRoomConfirmAlert, showDeleteRoomConfirmAlert } from '../component/alerts.js'; // Importa las funciones de alerta
+
 
 export const RoomDetail = () => {
     const { store, actions } = useContext(Context);
@@ -200,10 +203,9 @@ export const RoomDetail = () => {
 
         const success = await actions.joinRoom(roomId);
         if (success) {
-            alert('Join request sent successfully!');
-            setRequestStatus('pending');
+            showRoomRequestSentAlert(() => setRequestStatus('pending'));
         } else {
-            alert('Failed to send join request.');
+            showErrorAlert('Error', 'Failed to send join request.');
         }
     };
 
@@ -213,26 +215,46 @@ export const RoomDetail = () => {
             return;
         }
 
-        const success = await actions.updateParticipantStatus(roomId, userId, 'abandoned');
-        if (success) {
-            setRoom(prevRoom => ({
-                ...prevRoom,
-                participants: prevRoom.participants.filter(p => p.participant_id !== userId)
-            }));
-            alert('You have successfully abandoned the room');
-            navigate('/');
-        } else {
-            alert('Failed to abandon the room.');
-        }
+        showLeaveRoomConfirmAlert().then(async (result) => {
+            if (result.isConfirmed) {
+                const success = await actions.updateParticipantStatus(roomId, userId, 'abandoned');
+                if (success) {
+                    setRoom(prevRoom => ({
+                        ...prevRoom,
+                        participants: prevRoom.participants.filter(p => p.participant_id !== userId)
+                    }));
+                    showAutoCloseAlert('Left Room', 'You have successfully left the room.', 2000)
+                        .then(() => navigate('/'));
+                } else {
+                    showErrorAlert('Error', 'Failed to leave the room.');
+                }
+            }
+        });
+    };
+    const handleDeleteRoom = async () => {
+        showDeleteRoomConfirmAlert().then(async (result) => {
+            if (result.isConfirmed) {
+                const success = await actions.deleteRoom(roomId);
+                if (success) {
+                    showAutoCloseAlert('Deleted!', 'The room has been deleted successfully.', 2000)
+                        .then(() => navigate('/'));
+                } else {
+                    showErrorAlert('Error', 'Failed to delete the room.');
+                }
+            }
+        });
     };
 
     const handleWithdrawRequest = async () => {
         const success = await actions.withdrawRequest(roomId);
         if (success) {
-            alert('Request withdrawn successfully!');
+            showAutoCloseAlert('Request Withdrawn Successfully', 'Your request has been withdrawn successfully.', 2000)
+                .then(() => {
+                    navigate('/');
+                });
             setRequestStatus(null);
         } else {
-            alert('Failed to withdraw request.');
+            showErrorAlert('Error', 'Failed to withdraw request.');
         }
     };
 
@@ -291,7 +313,7 @@ export const RoomDetail = () => {
         switch (platform.toLowerCase()) {
             case 'xbox':
                 return <img src={xboxIcon} alt="Xbox" style={iconStyle} />;
-            case 'switch':
+            case 'nintendo':
                 return <img src={switchIcon} alt="Switch" style={iconStyle} />;
             case 'playstation':
             case 'Playstation':
@@ -354,11 +376,22 @@ export const RoomDetail = () => {
                             </p>
                         </div>
                         {isHost && (
-                            <div className="room-pills ">
-                                <button className={`pill-detail ${currentView === 'details' ? 'active' : ''}`} onClick={() => handleToggleView('details')}>Room Details</button>
-                                <button className={`pill-participants mx-2 ${currentView === 'participants' ? 'active' : ''}`} onClick={() => handleToggleView('participants')}>
-                                    Members & Requests ({countPendingRequests()})
-                                </button>
+                            <div className="room-pills d-flex align-items-center justify-content-between">
+                                <div>
+                                    <button className={`pill-detail ${currentView === 'details' ? 'active' : ''}`} onClick={() => handleToggleView('details')}>Room Details</button>
+                                    <button className={`pill-participants mx-2 ${currentView === 'participants' ? 'active' : ''}`} onClick={() => handleToggleView('participants')}>
+                                        Members & Requests ({countPendingRequests()})
+                                    </button>
+                                </div>
+                                <div>
+                                    <button className="edit-room-btn " onClick={() => navigate(`/edit-room/${room.room_id}`)} style={{ background: 'none', border: 'none' }}>
+                                        <FaPencilAlt style={{ color: 'white', fontSize: '20px' }} />
+                                    </button>
+                                    <button className="delete-room-btn mr-2" onClick={handleDeleteRoom} style={{ background: 'none', border: 'none' }}>
+                                        <FaTrashAlt style={{ color: 'red', fontSize: '20px' }} />
+                                    </button>
+                                </div>
+
                             </div>
                         )}
                         {currentView === 'details' && (
