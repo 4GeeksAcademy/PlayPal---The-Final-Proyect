@@ -47,3 +47,20 @@
         font-size: 14px; /* Tamaño de fuente más grande para mejor legibilidad */
     }
 }
+
+.form-control {
+    width: 100%;
+    margin-bottom: 10px;
+    background-color: transparent;
+    color: white;
+    border: 1px solid #0096D2;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+.form-control:focus {
+    background-color: transparent; /* Asegura que permanezca transparente cuando esté enfocado */
+    color: white;
+    outline: none; /* Elimina el borde de enfoque predeterminado */
+    box-shadow: none; /* Elimina la sombra del cuadro de enfoque predeterminado */
+}

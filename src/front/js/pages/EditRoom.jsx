@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Context } from "../store/appContext";
 import { useParams, useNavigate } from 'react-router-dom';
+import '../../styles/BuyMeACoffee.css'
 
 export const EditRoom = () => {
     const { store, actions } = useContext(Context);
@@ -71,14 +72,15 @@ export const EditRoom = () => {
 
     return (
         <div className="container mt-5">
+            <div className="coffee-container">
             <h2>Edit Room</h2>
             {error && <div className="alert alert-danger">{error}</div>}
             <form onSubmit={handleSubmit}>
-                <div className="mb-3">
+                <div className="mb-3 ">
                     <label htmlFor="room_name" className="form-label">Room Name</label>
                     <input
                         type="text"
-                        className="form-control"
+                        className="form-control mx-auto"
                         id="room_name"
                         name="room_name"
                         value={roomData.room_name}
@@ -89,16 +91,16 @@ export const EditRoom = () => {
                 <div className="mb-3">
                     <label htmlFor="game_id" className="form-label">Game</label>
                     <select
-                        className="form-control"
+                        className="form-control mx-auto"
                         id="game_id"
                         name="game_id"
                         value={roomData.game_id}
                         onChange={handleChange}
                         required
                     >
-                        <option value="">Select a game</option>
+                        <option value="" >Select a game</option>
                         {store.games.map(game => (
-                            <option key={game.game_id} value={game.name}>{game.name}</option>
+                            <option className="form-control" key={game.game_id} value={game.name}>{game.name}</option>
                         ))}
                     </select>
                 </div>
@@ -106,7 +108,7 @@ export const EditRoom = () => {
                     <label htmlFor="date" className="form-label">Date</label>
                     <input
                         type="date"
-                        className="form-control"
+                        className="form-control mx-auto"
                         id="date"
                         name="date"
                         value={roomData.date}
@@ -118,7 +120,7 @@ export const EditRoom = () => {
                     <label htmlFor="time" className="form-label">Time</label>
                     <input
                         type="time"
-                        className="form-control"
+                        className="form-control mx-auto"
                         id="time"
                         name="time"
                         value={roomData.time}
@@ -131,7 +133,7 @@ export const EditRoom = () => {
                             <label htmlFor="duration" className="form-label">Duration (minutes)</label>
                             <input
                                 type="number"
-                                className="form-control"
+                                className="form-control mx-auto"
                                 id="duration"
                                 name="duration"
                                 value={roomData.duration}
@@ -142,7 +144,7 @@ export const EditRoom = () => {
                 <div className="mb-3">
                     <label htmlFor="platform" className="form-label">Platform</label>
                     <select
-                        className="form-control"
+                        className="form-control mx-auto"
                         id="platform"
                         name="platform"
                         value={roomData.platform}
@@ -159,7 +161,7 @@ export const EditRoom = () => {
                 <div className="mb-3">
                     <label htmlFor="description" className="form-label">Description</label>
                     <textarea
-                        className="form-control"
+                        className="form-control mx-auto"
                         id="description"
                         name="description"
                         value={roomData.description}
@@ -170,7 +172,7 @@ export const EditRoom = () => {
                 <div className="mb-3">
                     <label htmlFor="mood" className="form-label">Mood</label>
                     <select
-                        className="form-control"
+                        className="form-control mx-auto"
                         id="mood"
                         name="mood"
                         value={roomData.mood}
@@ -185,7 +187,7 @@ export const EditRoom = () => {
                     <label htmlFor="room_size" className="form-label">Room Size</label>
                     <input
                         type="number"
-                        className="form-control"
+                        className="form-control mx-auto"
                         id="room_size"
                         name="room_size"
                         value={roomData.room_size}
@@ -195,6 +197,7 @@ export const EditRoom = () => {
                 </div>
                 <button type="submit" className="btn btn-primary">Update Room</button>
             </form>
+        </div>
         </div>
     );
 };
