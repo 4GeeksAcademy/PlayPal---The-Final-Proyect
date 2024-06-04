@@ -1,0 +1,49 @@
+.coffee-container {
+    background-color: #0a0e14; /* Fondo oscuro para resaltar colores brillantes */
+    color: #ffffff;
+    font-family: 'Orbitron', sans-serif;
+    border: 2px solid #0056b3; /* Borde estilizado */
+    padding: 20px;
+    border-radius: 10px; /* Bordes redondeados para un look moderno */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Sombra para profundidad */
+    max-width: 600px;
+    margin: 20px auto;
+    text-align: center;
+}
+
+.success-message {
+    color: #4CAF50; /* Verde brillante para el mensaje de éxito */
+    font-size: 1.2em;
+    animation: glow 1.5s ease-in-out infinite alternate; /* Animación de brillo */
+}
+
+@keyframes glow {
+    from {
+        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073, 0 0 50px #e60073, 0 0 60px #e60073, 0 0 70px #e60073;
+    }
+    to {
+        text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6, 0 0 60px #ff4da6, 0 0 70px #ff4da6, 0 0 80px #ff4da6;
+    }
+}
+
+.paypal-button-container {
+    margin-top: 20px;
+}
+
+.support-message {
+    font-size: 12px; /* Tamaño del texto para la descripción */
+    margin-bottom: 20px; /* Espacio antes del botón PayPal */
+    color: #FFFFFF; /* Color dorado para destacar el mensaje */
+    font-style: italic; /* Estilo cursivo para dar un toque especial */
+}
+
+@media (max-width: 480px) {
+    .coffee-container {
+        padding: 10px; /* Menos padding en pantallas pequeñas */
+        max-width: 95%; /* Aprovechar más espacio horizontal */
+    }
+
+    .support-message, .success-message {
+        font-size: 14px; /* Tamaño de fuente más grande para mejor legibilidad */
+    }
+}

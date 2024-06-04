@@ -1,8 +1,80 @@
-/* En tu archivo SignUp.css */
-.profile-image {
-    border-radius: 50%;
-    width: 100px; /* Ajusta el tamaño según sea necesario */
-    height: 100px; /* Ajusta el tamaño según sea necesario */
-    object-fit: cover;
+.profile-container {
+    max-width: 1130px; /* Ancho máximo del contenedor */
+    margin: 20px auto;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    background-color: #333C53;
+    color: #FFF;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px; /* Tamaño de fuente inicial para móviles */
+    line-height: 1.5;
 }
 
+@media (min-width: 576px) {
+    .profile-container {
+        padding: 20px;
+        font-size: 16px; /* Tamaño de fuente para tablets */
+    }
+}
+
+@media (min-width: 768px) {
+    .profile-container {
+        padding: 20px;
+        font-size: 18px; /* Tamaño de fuente estándar para desktop */
+    }
+}
+
+.form-control {
+    width: 100%;
+    margin-bottom: 10px;
+    background-color: #fff;
+    color: #333;
+    border: 1px solid #0096D2;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+.form-control[readOnly] {
+    background-color: #333C53;
+    color: #ccc;
+    border: 1px solid #0096D2;
+}
+
+.btn {
+    padding: 8px 15px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    .btn {
+        font-size: 16px; /* Botones más grandes en pantallas más grandes */
+    }
+}
+
+.profile-image {
+    border-radius: 50%; /* Asegura que la imagen sea siempre circular */
+    width: 80px; /* Tamaño inicial para móviles */
+    height: 80px;
+    object-fit: cover;
+    margin-bottom: 10px;
+    padding: 0; /* Eliminar cualquier padding */
+}
+
+@media (min-width: 768px) {
+    .profile-image {
+        width: 100px; /* Tamaño para pantallas más grandes */
+        height: 100px;
+    }
+}
+
+.button-group {
+    width: 100%; /* Asegura que el contenedor use todo el ancho disponible */
+}
+
+
+.btn-secondary {
+    margin-right: 10px; /* Asegura un espacio entre los botones 'Update' y 'Cancel' */
+    margin-left: 10px;
+}

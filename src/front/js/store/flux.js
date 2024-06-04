@@ -21,81 +21,83 @@ const getState = ({ getStore, getActions, setStore }) => {
                         },
                         body: JSON.stringify(logInData)
                     });
+            
+                    let data = await response.json();  // Asegúrate de obtener siempre la respuesta JSON
                     if (!response.ok) {
-                        throw new Error('Failed to log in');
+                        throw new Error(data.error || 'Failed to log in');
                     }
-
-                    let data = await response.json();
+            
                     localStorage.setItem("jwt-token", data.token);
-                    localStorage.setItem("userId", data.user_id); // Guardar userId en localStorage
-                    localStorage.setItem("username", data.username)
+                    localStorage.setItem("userId", data.user_id);
+                    localStorage.setItem("username", data.username);
                     setStore({ user: data });
-
+            
                     return true;
                 } catch (error) {
-                    console.error('Error logging user in:', error);
-                    return false;
+                    console.error('Error logging user in:', error.message);
+                    throw error;  // Propaga el error para manejarlo en el componente
                 }
             },
+            
 
             uploadImageToCloudinary: async (imageFile) => {
                 const preset_name = 'sducy1dm';
                 const cloud_name = 'dwnbekby9';
-            
+
                 const data = new FormData();
                 data.append('file', imageFile);
                 data.append('upload_preset', preset_name);
-            
+
                 try {
                     const response = await fetch(`https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`, {
                         method: 'POST',
                         body: data
                     });
-            
+
                     if (!response.ok) {
                         throw new Error('Failed to upload image');
                     }
-            
+
                     const file = await response.json();
                     const originalUrl = file.secure_url;
-            
+
                     console.log("Original URL: ", originalUrl); // Verificar la URL original
-            
+
                     return originalUrl;
                 } catch (error) {
                     console.error('Error uploading image:', error);
                     return null;
                 }
             },
-            
-                       
+
+
             submitSignUpForm: async (signUpData) => {
                 try {
                     // Extrae imageFile de signUpData y guarda el resto de los datos en 'rest'
                     const { imageFile, ...rest } = signUpData;
-            
+
                     let imageUrl = null;
                     if (imageFile) {
                         // Si hay un archivo de imagen, súbelo a Cloudinary usando la acción uploadImageToCloudinary
                         const originalUrl = await getActions().uploadImageToCloudinary(imageFile);
                         if (!originalUrl) throw new Error('Failed to upload image to Cloudinary');
-            
+
                         console.log("Original URL from Cloudinary: ", originalUrl);
-            
+
                         // Aplica transformaciones a la URL de la imagen
                         const transformations = 'ar_1:1,c_auto,g_auto,w_500,r_max';
                         imageUrl = originalUrl.replace('/upload/', `/upload/${transformations}/`);
-            
+
                         console.log("Transformed URL: ", imageUrl); // Verificar la URL transformada
                     }
-            
+
                     // Si no hay imagen, establecer un valor predeterminado o manejar el caso como prefieras
                     if (!imageUrl) {
                         imageUrl = 'default_image_url'; // Cambia esto según sea necesario
                     }
-            
+
                     console.log("Image URL to be saved: ", imageUrl); // Verificar la URL antes de guardarla
-            
+
                     // Crea el signUpData de datos para el registro, incluyendo la URL de la imagen si existe
                     const updatedSignUpData = { ...rest, url_image: imageUrl };
                     let response = await fetch(`${apiUrl}/api/signup`, {
@@ -105,20 +107,68 @@ const getState = ({ getStore, getActions, setStore }) => {
                         },
                         body: JSON.stringify(updatedSignUpData)
                     });
-            
+
                     if (!response.ok) {
                         throw new Error('Failed to create user');
                     }
-            
+
                     return true;
                 } catch (error) {
                     console.error('Error creating user:', error);
                     return false;
                 }
             },
-            
-            
-            
+
+            editCloudinaryImage: async (imageFile) => {
+                const token = localStorage.getItem('jwt-token');
+                const userId = localStorage.getItem('userId'); // Obtener userId de localStorage
+                const preset_name = 'sducy1dm'; // Preset de Cloudinary
+                const cloud_name = 'dwnbekby9'; // Nombre de tu cuenta en Cloudinary
+
+                // Prepara los datos para la subida a Cloudinary
+                const data = new FormData();
+                data.append('file', imageFile);
+                data.append('upload_preset', preset_name);
+
+                try {
+                    // Realiza la solicitud POST a Cloudinary para subir la imagen
+                    const response = await fetch(`https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`, {
+                        method: 'POST',
+                        body: data
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to upload image to Cloudinary');
+                    }
+
+                    const file = await response.json();
+                    const imageUrl = file.secure_url; // Obtiene la URL segura de la imagen subida
+                    console.log(imageUrl)
+                    // Realiza la solicitud PUT a tu API para actualizar el perfil del usuario con la nueva URL de la imagen
+                    let apiResponse = await fetch(`${apiUrl}/api/user/${userId}/update-image`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}` // Asegúrate de incluir el token JWT correcto
+                        },
+                        body: JSON.stringify({
+                            url_image: imageUrl  // Envía la nueva URL de la imagen para actualizar en el perfil del usuario
+                        })
+                    });
+                    // console.log("ESTO es lo que se envía",body)
+                    if (!apiResponse.ok) {
+                        throw new Error('Failed to update user profile in the database');
+                    }
+
+                    const updatedUser = await apiResponse.json();
+                    return updatedUser; // Retorna el usuario actualizado para uso posterior o manejo en el store
+                } catch (error) {
+                    console.error('Error updating image:', error);
+                    return null; // Retorna null en caso de error
+                }
+            },
+
+
             requestResetPassword: async (email) => {
                 const store = getStore();
                 try {
@@ -370,6 +420,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     return false;
                 }
             },
+
             initializeData: async () => {
                 const store = setStore()
                 setStore({ loading: true });
@@ -382,6 +433,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     console.log(store)
                 }
             },
+
             joinRoom: async (roomId) => {
                 const token = localStorage.getItem('jwt-token');
                 if (!token) return false;
@@ -447,6 +499,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     return false;
                 }
             },
+
             checkRequestStatus: async (roomId) => {
                 const token = localStorage.getItem('jwt-token');
                 if (!token) return null;
@@ -467,6 +520,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     return null;
                 }
             },
+            
             withdrawRequest: async (roomId) => {
                 const token = localStorage.getItem('jwt-token');
                 if (!token) return null;
@@ -488,6 +542,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
+
             getComments: async (roomId) => {
                 const token = localStorage.getItem('jwt-token');
                 if (!token) return [];
@@ -508,6 +563,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     return [];
                 }
             },
+
             addComment: async (roomId, content, isHost) => {
                 const token = localStorage.getItem('jwt-token');
                 if (!token) {
@@ -531,6 +587,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                     return false;
                 }
             },
+            
             updateParticipantStatus: async (roomId, participantId, status) => {
                 const token = localStorage.getItem('jwt-token');
                 if (!token) {

@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { Context } from "../store/appContext";
+import "../../styles/ForgotPassword.css"; // Asegúrate de importar el CSS
 
 export const ForgotPassword = () => {
     const { store, actions } = useContext(Context);
@@ -16,7 +17,7 @@ export const ForgotPassword = () => {
     };
 
     return (
-        <div>
+        <div className="forgot-password-container">
             <h1>Forgot Password</h1>
             <form onSubmit={handleSubmit}>
                 <label>Email:</label>

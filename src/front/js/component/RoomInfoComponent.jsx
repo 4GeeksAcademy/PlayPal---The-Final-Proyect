@@ -1,22 +1,24 @@
 import React from 'react';
 import '../../styles/RoomInfo.css';
 
-const RoomDetailsView = ({ room, participantsCount, formattedDateTime, renderPlatformIcon, handleKickParticipant, isHost }) => {
-    
+const RoomDetailsView = ({ room, participantsCount, formattedDateTime, renderPlatformIcon, isHost }) => {
+
     return (
         <div className="">
+
+            <p>{room.description}</p>
             <div className="formatted-datetime text-info">
                 <p>{formattedDateTime}</p>
             </div>
-            <p>{room.description}</p>
-            <p><strong>Participants:</strong></p>
-            <ul>
-                {room.participants.map(participant => (
-                    <li key={participant.participant_id}>
-                        {participant.participant_name}
-                        {isHost && (
-                            <button className="kick-button" onClick={() => handleKickParticipant(participant.participant_id)}>Kick</button>
-                        )}
+            <ul className='participant-item'>
+                {room.participants.map((participant, index) => (
+                    <li key={participant.participant_id} className="paticipant-item" style={{ zIndex: index }} >
+                        <img
+                            src={participant.profile_image_url}
+                            alt={`${participant.participant_name}'s profile`}
+                            className="profile-image"
+                        />
+
                     </li>
                 ))}
             </ul>

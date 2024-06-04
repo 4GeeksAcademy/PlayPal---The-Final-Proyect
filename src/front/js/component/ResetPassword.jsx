@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Context } from "../store/appContext";
+import "../../styles/ResetPassword.css"; // Asegúrate de importar el CSS
 
 export const ResetPassword = () => {
     const { store, actions } = useContext(Context);
@@ -19,7 +20,7 @@ export const ResetPassword = () => {
     };
 
     return (
-        <div>
+        <div className="reset-password-container">
             <h1>Reset Password</h1>
             <form onSubmit={handleSubmit}>
                 <label>New Password:</label>

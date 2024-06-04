@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import '../../styles/CommentsSection.css';
 
-const CommentsSection = ({ roomId, token, username, room, actions }) => {
-    const [comments, setComments] = useState([]);
-    const [newComment, setNewComment] = useState('');
+const CommentsSection = ({ roomId, token, username, room, actions, comments, setComments, newComment, setNewComment }) => {
 
-    useEffect(() => {
+   /*  useEffect(() => {
         fetchComments();
     }, []);
 
@@ -16,7 +14,7 @@ const CommentsSection = ({ roomId, token, username, room, actions }) => {
         } catch (error) {
             console.error('Error fetching comments:', error);
         }
-    };
+    }; */
 
     const handleAddComment = async () => {
         if (!token) {
@@ -54,21 +52,12 @@ const CommentsSection = ({ roomId, token, username, room, actions }) => {
         }
     };
 
-
     return (
         <div className="comments-section room-info">
             <h3>Comments</h3>
-            <div className="comments-list">
-                {comments.map(comment => (
-                    <div key={comment.comment_id} className="comment">
-                        <p><strong>{comment.username}</strong> <small>{timeAgo(comment.created_at)}</small> <br />
-                            {comment.content}</p>
-
-                    </div>
-                ))}
-            </div>
             <div className="add-comment">
-            <div className="form-group">
+            
+                <div className="form-group add-comment">
                     <textarea
                         className="form-control comment-box"
                         id="exampleFormControlTextarea1"
@@ -78,8 +67,24 @@ const CommentsSection = ({ roomId, token, username, room, actions }) => {
                         onChange={(e) => setNewComment(e.target.value)}
                     ></textarea>
                 </div>
-                <button className='join-room mt-3 mx-0' onClick={handleAddComment}>Add Comment</button>
+                <button  className='join-room mt-2 mb-2 mx-0 justify-content-end' onClick={handleAddComment}>Add Comment</button>
             </div>
+            <div className="comments-list">
+            {comments.slice().reverse().map(comment => (
+                    
+                    <div key={comment.comment_id} className="comment d-flex">
+                        <img
+                        src={comment.profile_image_url}
+                        alt={`${comment.username}'s profile`}
+                        className="profile-image"
+                        style={{ width: '32px', height: '32px', borderRadius: '50%', marginRight: '10px' }}
+                    />
+                        <p><strong>{comment.username}</strong> <small>{timeAgo(comment.created_at)}</small> <br />
+                            {comment.content}</p>
+                    </div>
+                ))}
+            </div>
+            
         </div>
     );
 };

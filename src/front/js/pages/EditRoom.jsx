@@ -23,8 +23,11 @@ export const EditRoom = () => {
         if (room) {
             setRoomData({
                 ...room,
+                game_id: room.game ? room.game.name : '', // Ensure game is defined
                 room_size: room.room_size !== undefined ? room.room_size : 4 // Ensure room_size is set correctly
             });
+        } else {
+            setError('Room not found');
         }
     }, [room_id, store.rooms]);
 
@@ -38,12 +41,16 @@ export const EditRoom = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('roomData:', roomData)
+        console.log('roomData:', roomData);
 
         const selectedGame = store.games.find(game => game.name === roomData.game_id);
-        console.log('Selected game is:', selectedGame)
-        const gameId = selectedGame.game_id
-        console.log(gameId)
+        if (!selectedGame) {
+            setError('Selected game not found');
+            return;
+        }
+        console.log('Selected game is:', selectedGame);
+        const gameId = selectedGame.game_id;
+        console.log(gameId);
 
         const formattedRoomData = {
             ...roomData,
@@ -52,7 +59,7 @@ export const EditRoom = () => {
             time: roomData.time.toString(),
             room_size: parseInt(roomData.room_size, 10) || 4 // Ensure room_size is a valid number
         };
-        console.log('FormatedRoom', formattedRoomData)
+        console.log('FormattedRoomData:', formattedRoomData);
         const success = await actions.updateRoom(room_id, formattedRoomData);
         if (success) {
             navigate('/');
@@ -90,7 +97,7 @@ export const EditRoom = () => {
                     >
                         <option value="">Select a game</option>
                         {store.games.map(game => (
-                            <option key={game.id} value={game.name}>{game.name}</option>
+                            <option key={game.game_id} value={game.name}>{game.name}</option>
                         ))}
                     </select>
                 </div>
@@ -128,12 +135,11 @@ export const EditRoom = () => {
                         onChange={handleChange}
                         required
                     >
-                        <option value="Xbox">Xbox</option>
-                        <option value="PSN">PSN</option>
-                        <option value="PC">PC</option>
-                        <option value="Google Play">Google Play</option>
-                        <option value="Nintendo">Nintendo</option>
                         <option value="All">All</option>
+                        <option value="Xbox">Xbox</option>
+                        <option value="PlayStation">PlayStation</option>
+                        <option value="PC">PC</option>
+                        <option value="Nintendo">Nintendo</option>
                     </select>
                 </div>
                 <div className="mb-3">

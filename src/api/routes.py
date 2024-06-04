@@ -1,6 +1,4 @@
-"""
-This module takes care of starting the API Server, Loading the DB and Adding the endpoints
-"""
+
 from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, User, Room, Games, Room_request, Room_participant, Comment, Review
 from api.utils import generate_sitemap, APIException
@@ -133,9 +131,9 @@ def get_token():
             return jsonify({'error': 'Invalid email format.'}), 400
         
         login_user = User.query.filter_by(email=email).one_or_none()
-
-        if not login_user:
-            return jsonify({'error': 'Email/user not found.'}), 404
+        
+        if not login_user or login_user.is_deleted:
+            return jsonify({'error': 'Email not found or account is deleted.'}), 404
 
         if bcrypt.check_password_hash(login_user.password, password):
             expires = timedelta(hours=1)  # pueden ser "hours", "minutes", "days","seconds"
@@ -222,10 +220,31 @@ def get_current_rooms():
         for room in current_rooms:
             participants = []
             for participant in room.room_participants:
+                user = User.query.get(participant.user_id)
+                platform_id = None
+
+                # Verificar la plataforma de la sala y asignar la plataforma_id correcta
+                if room.platform.lower() == 'xbox' and user.xbox:
+                    platform_id = user.xbox
+                elif room.platform.lower() == 'playstation' and user.psn:
+                    platform_id = user.psn
+                elif room.platform.lower() == 'steam' and user.steam:
+                    platform_id = user.steam
+                elif room.platform.lower() == 'discord' and user.discord:
+                    platform_id = user.discord
+                elif room.platform.lower() == 'nintendo' and user.nintendo:
+                    platform_id = user.nintendo
+                elif room.platform.lower() == 'epic_id' and user.epic_id:
+                    platform_id = user.epic_id
+
                 participants.append({
-                    "participant_id": participant.user.id,
-                    "participant_name": participant.user.username,
-                    "confirmed": participant.confirmed
+                    "participant_id": user.id,
+                    "participant_name": user.username,
+                    "profile_image_url": user.url_image,  # Incluir la URL de la imagen de perfil
+                    "confirmed": participant.confirmed,
+                    "platform": room.platform,
+                    "platform_id": platform_id,
+                    "discord_id": user.discord  # Incluir la ID de Discord
                 })
 
             serialized_room = {
@@ -239,14 +258,14 @@ def get_current_rooms():
                 "time": room.time,
                 "platform": room.platform,
                 "mood": room.mood,
-                "participants": participants  
+                "participants": participants  # Incluyendo los participantes serializados
             }
             serialized_rooms.append(serialized_room)
 
         return jsonify(serialized_rooms), 200
     
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e), "message": "An error occurred while fetching rooms"}), 500
 
 
 @api.route('/create_room', methods=['POST'])
@@ -290,7 +309,7 @@ def create_room():
 
 @api.route('/create_game', methods=['POST'])
 @jwt_required()
-def create_game():
+def create_games():
     try:
         # Obtener el ID de usuario del token de acceso
         current_user_id = get_jwt_identity()
@@ -300,30 +319,31 @@ def create_game():
         if not current_user or not current_user.admin:
             return jsonify({"error": "Only admins can create games."}), 403
 
-        game_data = request.json
-        print("Datos recibidos en la solicitud:", game_data)
+        games_data = request.json
+        # Asegurar que games_data sea una lista si no lo es
+        if not isinstance(games_data, list):
+            games_data = [games_data]
 
-        name = game_data.get('name')
+        for game_data in games_data:
+            name = game_data.get('name')
+            if not name:
+                continue  # Saltar este juego si no tiene nombre
 
-        if not name:
-            return jsonify({"error": "Missing required field: name"}), 400
+            # Verificar si el juego ya existe
+            existing_game = Games.query.filter_by(name=name).first()
+            if existing_game:
+                continue  # Saltar este juego si ya existe
 
-        existing_game = Games.query.filter_by(name=name).first()
-        if existing_game:
-            return jsonify({'error': 'Game already exists.'}), 409
+            new_game = Games(name=name)
+            db.session.add(new_game)
 
-        new_game = Games(
-            name=name
-        )
-
-        db.session.add(new_game)
         db.session.commit()
+        return jsonify({"message": "Games processed"}), 201
 
-        return jsonify({"message": "Game created successfully", "game": new_game.serialize()}), 201
-    
     except Exception as e:
         print(str(e))
-        return jsonify({"message": "Failed to create game", "error": str(e)}), 500
+        return jsonify({"message": "Failed to process games", "error": str(e)}), 500
+
     
 
 # Para obtener un room de un user particular-------------------------------------------------------------------------------------------
@@ -459,23 +479,25 @@ def update_user(user_id):
     try:
         # Obtener el ID de usuario del token de acceso
         current_user_id = get_jwt_identity()
-
+        
         # Obtener la instancia del usuario actual
         current_user = User.query.get(current_user_id)
-
+        
         # Verificar si el usuario actual es admin o el mismo usuario que solicita la actualización
         if not current_user or (current_user.id != user_id and not current_user.admin):
             return jsonify({"error": "Unauthorized."}), 403
-
+        
         user = User.query.get(user_id)
+        
         if user:
+            
             user_data = request.json
-
+            
             # Solo actualizar el password si se proporciona uno nuevo, de lo contrario, mantener el actual
             new_password = user_data.get('password')
             if new_password:
                 user.password = bcrypt.generate_password_hash(new_password).decode("utf-8")
-
+            
             # Actualizar los demás campos si se proporcionan, de lo contrario, mantener los valores actuales
             user.username = user_data.get('username', user.username)
             user.first_name = user_data.get('first_name', user.first_name)
@@ -487,13 +509,13 @@ def update_user(user_id):
             user.xbox = user_data.get('xbox', user.xbox)
             user.psn = user_data.get('psn', user.psn)
             user.steam = user_data.get('steam', user.steam)
-            user.google_play = user_data.get('google_play', user.google_play)
+            user.discord = user_data.get('discord', user.discord)
             user.nintendo = user_data.get('nintendo', user.nintendo)
             user.epic_id = user_data.get('epic_id', user.epic_id)
             user.bio = user_data.get('bio', user.bio)
             user.gender = user_data.get('gender', user.gender)
             user.url_image = user_data.get('url_image', user.url_image)
-
+            
             # Solo permitir que los administradores actualicen el campo admin
             if current_user.admin:
                 user.admin = user_data.get('admin', user.admin)
@@ -502,6 +524,37 @@ def update_user(user_id):
             return jsonify({"message": "User updated successfully", "user": user.serialize()}), 200
         else:
             return jsonify({"error": "User not found."}), 404
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@api.route('/user/<int:user_id>/update-image', methods=['PUT'])
+@jwt_required()
+def update_user_image(user_id):
+    try:
+        # Obtener el ID de usuario del token de acceso
+        current_user_id = get_jwt_identity()
+
+        # Asegurar que el usuario está autorizado para actualizar la imagen
+        if current_user_id != user_id:
+            return jsonify({"error": "Unauthorized"}), 403
+
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({"error": "User not found."}), 404
+
+        user_data = request.json
+        new_image_url = user_data.get('url_image')
+        
+        if not new_image_url:
+            return jsonify({"error": "No image URL provided."}), 400
+
+        # Actualiza la URL de la imagen del usuario
+        user.url_image = new_image_url
+        db.session.commit()
+
+        return jsonify({"message": "Image updated successfully", "url_image": user.url_image}), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -568,11 +621,15 @@ def join_room(room_id):
 
         # Comprobar si el usuario tiene la plataforma correspondiente
         if room.platform != 'All':
-            if room.platform == 'PC':
+            platform_to_check = room.platform.lower()
+            if platform_to_check == 'pc':
                 if not (current_user.steam or current_user.epic_id):
                     return jsonify({"error": "You do not have a PC ID (Steam or Epic) associated with your profile"}), 400
+            elif platform_to_check in ['playstation', 'psn']:
+                if not current_user.psn:
+                    return jsonify({"error": "You do not have a PlayStation ID associated with your profile"}), 400
             else:
-                if not getattr(current_user, room.platform.lower(), None):
+                if not getattr(current_user, platform_to_check, None):
                     return jsonify({"error": f"You do not have a {room.platform} ID associated with your profile"}), 400
         
         # Verificar si la solicitud ya existe
@@ -584,16 +641,20 @@ def join_room(room_id):
                 return jsonify({"message": "Rejoin request sent successfully", "request": existing_request.serialize()}), 200
             else:
                 return jsonify({"error": "Request already exists"}), 400
-        
-        # Crear nueva solicitud
-        new_request = Room_request(room_id=room_id, user_id=current_user_id, status='pending')
+
+        # Crear nueva solicitud de entrada
+        new_request = Room_request(
+            room_id=room_id,
+            user_id=current_user_id,
+            status='pending'
+        )
         db.session.add(new_request)
         db.session.commit()
-        
-        return jsonify({"message": "Request to join room sent successfully", "request": new_request.serialize()}), 200
-    
+
+        return jsonify({"message": "Join request sent successfully", "request": new_request.serialize()}), 201
+
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e), "message": "An error occurred while sending join request"}), 500
 
 #-----------------------------------PENDING "JOIN" REQUEST-------------------------------------------------
 
@@ -991,7 +1052,5 @@ def update_participant_status(room_id):
         print(f"Exception: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
-    except Exception as e:
-        print(f"Exception: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+
 

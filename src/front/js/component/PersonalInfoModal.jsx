@@ -4,9 +4,15 @@ import '../../styles/Modals.css';
 const PersonalInfoModal = ({ show, handleClose, handleNext, onInputChange, signUpData }) => {
     const [birthDate, setBirthDate] = useState('');
     const [error, setError] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [password, setPassword] = useState('');
+
 
     const handleChange = (e) => {
         onInputChange(e.target.name, e.target.value);
+        if (e.target.name === 'password') {
+            setPassword(e.target.value);
+        }
     };
 
     const handleDateChange = (e) => {
@@ -31,6 +37,15 @@ const PersonalInfoModal = ({ show, handleClose, handleNext, onInputChange, signU
             age--;
         }
         return age;
+    };
+
+    const handleVerifyAndContinue = () => {
+        if (password !== confirmPassword) {
+            setError('Passwords do not match.');
+            return; // Prevents proceeding if the passwords do not match
+        }
+        setError(''); // Clears any previous error
+        handleNext(); // Calls the handleNext function passed from parent
     };
 
     return (
@@ -92,6 +107,19 @@ const PersonalInfoModal = ({ show, handleClose, handleNext, onInputChange, signU
                                 />
                             </div>
                             <div className="mb-3">
+                                <label htmlFor="confirm-password" className="form-label">Confirm Password</label>
+                                <input
+                                    type="password"
+                                    className="form-control"
+                                    id="confirm-password"
+                                    name="confirmPassword"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    required
+                                />
+                            </div>
+
+                            <div className="mb-3">
                                 <label htmlFor="birthdate" className="form-label">Date of Birth</label>
                                 <input
                                     type="date"
@@ -140,7 +168,7 @@ const PersonalInfoModal = ({ show, handleClose, handleNext, onInputChange, signU
                         </form>
                     </div>
                     <div className="modal-footer">
-                        <button type="button" className="btn btn-primary" onClick={handleNext}>Continue</button>
+                        <button type="button" className="btn btn-primary" onClick={handleVerifyAndContinue}>Continue</button>
                     </div>
                 </div>
             </div>

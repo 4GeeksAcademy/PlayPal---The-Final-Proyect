@@ -1,0 +1,25 @@
+.footer {
+    background-color: transparent; /* Fondo transparente */
+    padding: 10px 20px; /* Espaciado interno */
+    max-width: 1140px; /* Tamaño máximo */
+    margin: 0 auto; /* Centrar el footer */
+    position: fixed; /* Fijo en la parte inferior */
+    bottom: 0; /* Al fondo de la página */
+    width: 100%; /* Ancho completo */
+    display: flex; /* Uso de Flexbox para alinear elementos */
+    justify-content: center; /* Centrado horizontal */
+    align-items: center; /* Centrado vertical */
+}
+
+.btn-primary-footer {
+    background-color: #007BFF; /* Color de fondo del botón */
+    color: #ffffff; /* Color de texto blanco */
+    padding: 10px 20px; /* Padding del botón */
+    border-radius: 5px; /* Bordes redondeados */
+    text-decoration: none; /* Sin subrayado */
+    transition: background-color 0.3s ease; /* Transición suave para el cambio de color */
+}
+
+.btn-primary-footer:hover {
+    background-color: #0056b3; /* Cambia el color de fondo al pasar el mouse */
+}
