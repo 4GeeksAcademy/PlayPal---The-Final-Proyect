@@ -14,7 +14,9 @@ export const CreateRoom = () => {
         platform: '',
         description: '',
         mood: '',
-        room_size: 4 
+        room_size: 4,
+        user_timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        duration: ''  
     });
     const [error, setError] = useState(null);
     const navigate = useNavigate();
@@ -38,7 +40,8 @@ export const CreateRoom = () => {
             ...roomData,
             game_id: gameId,
             date: roomData.date.toString(),
-            time: roomData.time.toString()
+            time: roomData.time.toString(),
+            user_timezone: roomData.user_timezone
         };
         console.log('FORMATTED ROOMDATA', formattedRoomData)
         const success = await actions.createRoom(formattedRoomData);
@@ -50,7 +53,6 @@ export const CreateRoom = () => {
     };
 
     useEffect(() => {
-        // Cleanup function to avoid setting state on unmounted component
         return () => {
             setRoomData({
                 room_name: '',
@@ -60,7 +62,9 @@ export const CreateRoom = () => {
                 platform: '',
                 description: '',
                 mood: '',
-                room_size: 4 // Default room size
+                room_size: 4,
+                user_timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                duration: ''  
             });
             setError(null);
         };
@@ -120,6 +124,18 @@ export const CreateRoom = () => {
                         id="time"
                         name="time"
                         value={roomData.time}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+                <div className="mb-3">
+                    <label htmlFor="duration" className="form-label">Duration (minutes)</label>
+                    <input
+                        type="number"
+                        className="form-control"
+                        id="duration"
+                        name="duration"
+                        value={roomData.duration}
                         onChange={handleChange}
                         required
                     />
@@ -186,7 +202,5 @@ export const CreateRoom = () => {
             <div><p>nop</p></div>
         ) }
         </div>
-
-
     );
 };

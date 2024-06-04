@@ -1,4 +1,3 @@
-
 from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, User, Room, Games, Room_request, Room_participant, Comment, Review
 from api.utils import generate_sitemap, APIException
@@ -9,6 +8,7 @@ from datetime import timedelta
 import re
 import os
 from datetime import datetime, timedelta
+from pytz import timezone
 
 from sqlalchemy.exc import SQLAlchemyError
 import jwt
@@ -214,14 +214,23 @@ def reset_password(token):
 
 
 
-
 @api.route('/home', methods=['GET'])
 def get_current_rooms():
     try:
+        now_utc = datetime.now(timezone('UTC'))  # Obtener la hora actual en UTC
+
         current_rooms = Room.query.filter_by(is_deleted=False).all()
         serialized_rooms = []
 
         for room in current_rooms:
+            room_end_time = datetime.strptime(f"{room.date} {room.time}", '%Y-%m-%d %H:%M').replace(tzinfo=timezone('UTC'))
+            
+            # Marcar el room como expirado si la hora actual UTC es posterior a la hora de finalización del room
+            if room_end_time < now_utc:
+                room.is_deleted = True
+                db.session.commit()
+                continue  # Saltar la serialización de rooms expirados
+
             participants = []
             for participant in room.room_participants:
                 user = User.query.get(participant.user_id)
@@ -275,58 +284,52 @@ def get_current_rooms():
         return jsonify({"error": str(e), "message": "An error occurred while fetching rooms"}), 500
 
 
+
 @api.route('/create_room', methods=['POST'])
 @jwt_required()  # Esta decoración asegura que el usuario esté autenticado con un token JWT válido
 def create_room():
     try:
-        # Extraer datos del token JWT para obtener la identidad del usuario
         current_user_id = get_jwt_identity()
-        
-        # Obtener los datos de la solicitud JSON
         room_data = request.json
-        
-        # Verificar que todos los campos necesarios estén presentes
-        required_fields = ['date', 'time', 'duration', 'room_name', 'game_id', 'platform', 'description', 'mood', 'room_size']
+
+        required_fields = ['date', 'time', 'duration', 'room_name', 'game_id', 'platform', 'description', 'mood', 'room_size', 'user_timezone']
         for field in required_fields:
             if field not in room_data or not room_data[field]:
                 return jsonify({"error": f"Missing required field: {field}"}), 400
-        # Convertir la fecha y hora de inicio proporcionada en objeto datetime
-        start_datetime = datetime.strptime(f"{room_data.get('date')} {room_data.get('time')}", '%Y-%m-%d %H:%M')
 
-        # Obtener la fecha y hora actual
-        current_datetime = datetime.now()
+        user_tz = timezone(room_data.get('user_timezone'))
+        start_datetime = user_tz.localize(datetime.strptime(f"{room_data.get('date')} {room_data.get('time')}", '%Y-%m-%d %H:%M'))
+        current_datetime = datetime.now(user_tz)
 
-        current_time = datetime.now()
-        print("Current time:", current_time)
-
-        # Verificar que la fecha de inicio no sea anterior a la fecha actual
         if start_datetime < current_datetime:
             return jsonify({"error": "The start time cannot be in the past."}), 400
 
-        # Crear una nueva instancia de Room con los datos proporcionados
         new_room = Room(
-            user_id=current_user_id,  # Asignar al usuario actual como el anfitrión de la sala
+            user_id=current_user_id,
             date=room_data.get('date'),
             time=room_data.get('time'),
-            duration=int(room_data.get('duration')),  # Asegúrate de convertir la duración a entero
+            duration=int(room_data.get('duration')),
             room_name=room_data.get('room_name'),
             game_id=room_data.get('game_id'),
             platform=room_data.get('platform'),
             description=room_data.get('description'),
             mood=room_data.get('mood'),
-            room_size=room_data.get('room_size')
+            room_size=room_data.get('room_size'),
+            user_timezone=room_data.get('user_timezone'),
+            room_timezone='UTC'
         )
-        
-        # Agregar la nueva sala a la base de datos y confirmar la transacción
+
         db.session.add(new_room)
         db.session.commit()
-        
+
         return jsonify({"message": "Room created successfully", "room": new_room.serialize()}), 201
-    
+
     except Exception as e:
+        logging.error(f"Error creating room: {str(e)}")
         return jsonify({"message": "Failed to create room", "error": str(e)}), 500
 
-    
+
+
 
 @api.route('/create_game', methods=['POST'])
 @jwt_required()
@@ -402,24 +405,18 @@ def get_room(room_id):
 @jwt_required()
 def update_room(room_id):
     try:
-        # Obtener el ID de usuario del token de acceso
         current_user_id = get_jwt_identity()
-
-        # Verificar si el usuario existe
         current_user = User.query.get(current_user_id)
         if not current_user:
             return jsonify({"error": "User not found."}), 404
 
-        # Verificar si el room existe
         room = Room.query.get(room_id)
         if not room:
             return jsonify({"error": "Room not found."}), 404
 
-        # Verificar permisos
         if room.user_id != current_user_id and not current_user.admin:
             return jsonify({"error": "Unauthorized."}), 403
 
-        # Actualizar los datos del room
         room_data = request.json
         room.date = room_data.get('date', room.date)
         room.time = room_data.get('time', room.time)
@@ -435,6 +432,7 @@ def update_room(room_id):
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 
 # DELETE ROOM -------------------------------------------------------------------------------------------------------
