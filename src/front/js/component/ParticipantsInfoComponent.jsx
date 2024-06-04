@@ -7,6 +7,7 @@ import pcIcon from '../../img/pc.png';
 import discordIcon from '../../img/discord.png';
 
 const renderPlatformIcon = (platform) => {
+    console.log("this is our platform object", platform)
     if (!platform) {
         return null; // Si platform es undefined o null, no renderizar nada
     }

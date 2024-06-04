@@ -1,14 +1,11 @@
-.swal2-confirm.custom-confirm-button {
-    background-color: #0096D2 !important;
-    color: white !important;
-  }
-  .swal2-confirm.custom-error-button {
-    background-color: #B40000 !important;
-    color: white !important;
-  }
-  
-  @media (max-width: 600px) {
-    .swal2-popup {
-      width: 90% !important; /* Asegura que el modal se ajuste a pantallas pequeñas */
-    }
-  }
+.custom-confirm-button {
+  background-color: #0096D2 !important;
+  color: white !important;
+  border: none;
+}
+
+.custom-error-button {
+  background-color: #B40000 !important;
+  color: white !important;
+  border: none;
+}

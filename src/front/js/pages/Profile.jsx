@@ -42,8 +42,8 @@ export const Profile = () => {
         { name: 'PSN', icon: playstationIcon },
         { name: 'Steam', icon: steamIcon },
         { name: 'Discord', icon: discordIcon },
-        { name: 'Switch', icon: switchIcon },
-        { name: 'Epic ID', icon: epicIcon }
+        { name: 'Nintendo', icon: switchIcon },
+        { name: 'epic_id', icon: epicIcon }
     ];
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [imageFile, setImageFile] = useState(null);

@@ -2,7 +2,8 @@
     display: flex;
     align-items: center;
     padding: 0;
-    width: 820px;
+    width:100%;
+    max-width: 820px;
     background-color:  #A9ABAD42; /* Color de fondo basado en el diseño */
     border-radius: 6px; /* Bordes redondeados */
     border: 1px solid #ffffffa2;
@@ -25,8 +26,10 @@
 }
 
 .dropdown {
+    gap: 0px;
     padding: 0px;
-    margin-left: -1px; /* Remove any gap between the input and the dropdown */
+    margin-left: -10px; /* Remove any gap between the input and the dropdown */
+    margin-right: -10px;
 }
 
 .dropdown-toggle {
@@ -87,3 +90,11 @@
 .dropdown-toggle .dropdown-arrow {
     text-align: right; /* Align arrow to the right */
 }
+
+
+.prueba-drop {
+    margin: 0px;
+
+}
+
+
