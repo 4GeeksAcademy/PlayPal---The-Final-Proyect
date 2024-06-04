@@ -13,7 +13,8 @@ export const EditRoom = () => {
         platform: '',
         description: '',
         mood: '',
-        room_size: 4 // Default value set to 4
+        room_size: 4, // Default value set to 4
+        duration: ''  // Agregar este campo
     });
     const [error, setError] = useState(null);
     const navigate = useNavigate();
@@ -125,6 +126,19 @@ export const EditRoom = () => {
                         required
                     />
                 </div>
+                <div className="mb-3">
+
+                            <label htmlFor="duration" className="form-label">Duration (minutes)</label>
+                            <input
+                                type="number"
+                                className="form-control"
+                                id="duration"
+                                name="duration"
+                                value={roomData.duration}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
                 <div className="mb-3">
                     <label htmlFor="platform" className="form-label">Platform</label>
                     <select

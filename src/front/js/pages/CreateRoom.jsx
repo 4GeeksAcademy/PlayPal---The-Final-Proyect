@@ -56,9 +56,6 @@ export const CreateRoom = () => {
             setError('Invalid game selected. Please try again.');
             return;
         }
-        console.log('Selected game is:', selectedGame);
-        const gameId = selectedGame.game_id;
-        console.log(gameId);
 
         const formattedRoomData = {
             ...roomData,

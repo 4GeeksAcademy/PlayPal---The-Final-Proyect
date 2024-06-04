@@ -9,7 +9,7 @@ const images = {
   'dota-2': require('./dota2.jpg'),
   'ea-sports-fc': require('./eafc.jpg'),
   'fortnite': require('./Fortnite.png'),  // Correct case for Fortnite.png
-  'gta': require('./gta.jpg'),
+  'grand-theft-auto-online': require('./gta.jpg'),
   'halo': require('./halo.jpg'),
   'league-of-legends': require('./league-of-legends.jpg'),
   'lethal-company': require('./lethal-company.jpg'),

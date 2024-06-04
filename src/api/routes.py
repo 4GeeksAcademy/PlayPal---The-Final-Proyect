@@ -272,6 +272,7 @@ def get_current_rooms():
                 "time": room.time,
                 "platform": room.platform,
                 "mood": room.mood,
+                "duration" : room.duration,
                 "participants": participants  # Incluyendo los participantes serializados
             }
             serialized_rooms.append(serialized_room)
@@ -424,6 +425,7 @@ def update_room(room_id):
         room.description = room_data.get('description', room.description)
         room.mood = room_data.get('mood', room.mood)
         room.room_size = room_data.get('room_size', room.room_size)
+        room.duration = room_data.get('duration', room.duration)
 
         db.session.commit()
         return jsonify({"message": "Room updated successfully", "room": room.serialize()}), 200

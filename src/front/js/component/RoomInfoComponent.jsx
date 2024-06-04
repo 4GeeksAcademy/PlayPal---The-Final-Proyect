@@ -8,7 +8,7 @@ const RoomDetailsView = ({ room, participantsCount, formattedDateTime, renderPla
 
             <p>{room.description}</p>
             <div className="formatted-datetime text-info">
-                <p>{formattedDateTime}</p>
+                <p>{formattedDateTime} | Duration: {room.duration} minutes</p> 
             </div>
             <ul className='participant-item'>
                 {room.participants.map((participant, index) => (

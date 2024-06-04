@@ -116,7 +116,8 @@ class Room(db.Model):
             "is_deleted": self.is_deleted,
             "user_timezone": self.user_timezone,
             "room_timezone": self.room_timezone,
-            "start_datetime_utc": self.start_datetime_utc
+            "start_datetime_utc": self.start_datetime_utc,
+            "duration": self.duration
         }
 
 # Event listeners for SQLAlchemy to auto-calculate `end_time`

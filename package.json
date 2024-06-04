@@ -76,10 +76,8 @@
 	},
 	"dependencies": {
 		"@fortawesome/fontawesome-free": "^6.5.2",
-
-		"moment-timezone": "^0.5.45",
 		"@sweetalert2/theme-dark": "^5.0.16",
-
+		"moment-timezone": "^0.5.45",
 		"prop-types": "^15.6.1",
 		"react": "^16.8.4",
 		"react-dom": "^16.8.4",

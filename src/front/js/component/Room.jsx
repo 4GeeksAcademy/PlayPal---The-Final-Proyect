@@ -110,7 +110,7 @@ export const Room = ({ room }) => {
                         </div>
                         <div className="card-footer mt-auto">
                             <p className="text-info font-family-Inter">
-                                Starts: {room.date} at {room.time}
+                                Starts: {room.date} at {room.time} | Duration: {room.duration} minutes
                             </p>
                             {renderPlatformIcon(room.platform)} {/* Agregar aquí el icono de la plataforma */}
                         </div>
