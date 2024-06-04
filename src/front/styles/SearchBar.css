@@ -2,8 +2,9 @@
     display: flex;
     align-items: center;
     padding: 0;
-    width: 820px;
-    background-color:  #A9ABAD42;; /* Color de fondo basado en el diseño */
+    width:100%;
+    max-width: 820px;
+    background-color:  #A9ABAD42; /* Color de fondo basado en el diseño */
     border-radius: 6px; /* Bordes redondeados */
     border: 1px solid #ffffffa2;
     gap: 0; /* Remove gap between elements */
@@ -25,14 +26,17 @@
 }
 
 .dropdown {
-    margin-left: -1px; /* Remove any gap between the input and the dropdown */
+    gap: 0px;
+    padding: 0px;
+    margin-left: -10px; /* Remove any gap between the input and the dropdown */
+    margin-right: -10px;
 }
 
 .dropdown-toggle {
     width: 157px; /* Fixed width for the dropdown button */
     padding: 8px 16px; /* Adjust padding to match the input field */
     border-radius: 0 6px 6px 0; /* Rounded corners on the right */
-    background-color: #757575; /* Default background color for the button */
+    background-color: #A9ABAD42; /* Default background color for the button */
     color: #ffffff; /* Color de texto blanco */
     border: 1px solid #757575; /* Match the border color */
     border-left: none; /* Remove the left border */
@@ -86,3 +90,11 @@
 .dropdown-toggle .dropdown-arrow {
     text-align: right; /* Align arrow to the right */
 }
+
+
+.prueba-drop {
+    margin: 0px;
+
+}
+
+

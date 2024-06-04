@@ -3,8 +3,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%; /* Asegura que el contenedor ocupe el 100% del ancho disponible */
-    padding: 20px; /* Añade padding para cuando se vea en pantallas más pequeñas */
+    width: 100%;
+    padding: 20px;
 }
 
 .login-title {
@@ -19,20 +19,27 @@
 }
 
 .form-control {
-    background-color: #1e1e1e;
+    background-color: transparent; /* Cambiar el fondo a transparente */
     color: white;
-    width: 100%; /* Asegura que ocupe el 100% del contenedor disponible */
-    max-width: 428.5px; /* Ancho máximo para todas las pantallas */
+    width: 100%;
+    max-width: 430px;
+}
+
+.form-control:focus {
+    background-color: transparent; /* Asegura que permanezca transparente cuando esté enfocado */
+    color: white;
+    outline: none; /* Elimina el borde de enfoque predeterminado */
+    box-shadow: none; /* Elimina la sombra del cuadro de enfoque predeterminado */
 }
 
 .login-btn {
     background-color: #0096D2;
     color: white;
     border: none;
-    width: 100%; /* Asegura que ocupe el 100% del contenedor disponible */
-    max-width: 428.5px; /* Ancho máximo para todas las pantallas */
-    padding: 10px 0; /* Añade padding vertical para hacer el botón más grande */
-    display: block; /* Asegura que el botón ocupe toda la línea disponible */
+    width: 100%;
+    max-width: 428.5px;
+    padding: 10px 0;
+    display: block;
 }
 
 .login-btn:hover {
@@ -42,6 +49,13 @@
 .password-toggle-icon {
     cursor: pointer;
     color: #007bff;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;  /* Ajusta el tamaño del icono */
+    height: 24px; /* Ajusta el tamaño del icono */
+    padding: 0;   /* Asegura que no haya padding adicional */
+    line-height: 0; /* Asegura que el contenedor del ícono no se expanda */
 }
 
 .password-toggle-icon:hover {
@@ -58,8 +72,8 @@
     left: -30px;
     width: 100%;
     height: auto;
-    max-width: 630.5px; /* Ajusta este valor según tus necesidades */
-    margin-left: 64px; /* Añade una separación de 64px a la izquierda */
+    max-width: 630.5px;
+    margin-left: 64px;
 }
 
 @media (max-width: 768px) {
@@ -69,4 +83,3 @@
         max-width: 100%;
     }
 }
-        

@@ -4,6 +4,7 @@ import { SearchBar } from '../component/SearchBar.jsx';
 import { Context } from "../store/appContext";
 import { useNavigate } from 'react-router-dom';
 import { IoIosAddCircleOutline } from "react-icons/io";
+import { showWelcomeAlert } from '../component/alerts.js'
 import '../../styles/RoomList.css';
 
 export const Home = () => {
@@ -29,6 +30,22 @@ export const Home = () => {
 
     const handleCreateRoom = () => {
         navigate('/create-room');
+    };
+
+    useEffect(() => {
+        const lastVisit = localStorage.getItem('last-visit');
+        const today = new Date().toLocaleDateString();
+
+        if (lastVisit !== today) {
+            showWelcomeAlert();
+            localStorage.setItem('last-visit', today);
+        }
+    }, []);
+
+     const handleClearLocalStorage = () => {
+        localStorage.removeItem('last-visit');
+        localStorage.removeItem('jwt-token');
+        alert('localStorage cleared. Reload the page to test the welcome alert.');
     };
 
     const toggleRooms = (showMyRooms) => {

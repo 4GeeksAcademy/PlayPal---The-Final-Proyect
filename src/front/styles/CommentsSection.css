@@ -5,10 +5,16 @@
     font-style: normal;
     font-weight: 400;
     line-height: 150%; /* 24px */
+    max-height: 300px; /* Ajusta esta altura según sea necesario */
+    overflow-y: auto;
+    overflow-x: hidden;
 }
-.comment-box {
+.comment-box  {
     max-width: 950px;
-    background-color: white;
+    background-color: none;
+}
 
+.comment-box:focus {
+    background-color: none;
 }
 

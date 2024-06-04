@@ -76,13 +76,17 @@
 	},
 	"dependencies": {
 		"@fortawesome/fontawesome-free": "^6.5.2",
+
 		"moment-timezone": "^0.5.45",
+		"@sweetalert2/theme-dark": "^5.0.16",
+
 		"prop-types": "^15.6.1",
 		"react": "^16.8.4",
 		"react-dom": "^16.8.4",
 		"react-easy-crop": "^5.0.7",
 		"react-icons": "^5.2.1",
 		"react-polyfills": "0.0.1",
-		"react-router-dom": "^6.3.0"
+		"react-router-dom": "^6.3.0",
+		"sweetalert2": "^11.11.0"
 	}
 }

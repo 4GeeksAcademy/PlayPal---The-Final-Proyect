@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Context } from '../store/appContext';
+import images from '../../img/images.js'; // Import the images
 import fortniteImage from '../../img/Fortnite.png';
 import xboxIcon from '../../img/xbox.png';
 import switchIcon from '../../img/switch.png';
@@ -9,10 +10,13 @@ import playstationIcon from '../../img/playstation.png';
 import pcIcon from '../../img/pc.png';
 import { IoExitOutline } from "react-icons/io5";
 import { FaUser } from 'react-icons/fa';
+import { FaPencilAlt, FaTrashAlt } from 'react-icons/fa'; // Import the pencil and trash icons
 import '../../styles/RoomDetail.css';
 import RoomDetailsView from '../component/RoomInfoComponent.jsx';
 import ParticipantsView from '../component/ParticipantsInfoComponent.jsx';
 import CommentsSection from '../component/CommentsSection.jsx';
+import { showRoomRequestSentAlert, showErrorAlert, showAutoCloseAlert, showLeaveRoomConfirmAlert, showDeleteRoomConfirmAlert } from '../component/alerts.js'; // Importa las funciones de alerta
+
 
 export const RoomDetail = () => {
     const { store, actions } = useContext(Context);
@@ -31,16 +35,14 @@ export const RoomDetail = () => {
     const token = localStorage.getItem('jwt-token');
     const [isParticipant, setIsParticipant] = useState(false);
     const participantsRef = useRef(null);
+    const isMountedRef = useRef(true);
 
     useEffect(() => {
-        if (!token) {
-            navigate('/login');
-            return;
-        }
-
+        isMountedRef.current = true;
         const fetchData = async () => {
             try {
                 await actions.fetchRooms();
+                if (!isMountedRef.current) return; // Check if component is still mounted
                 const fetchedRoom = store.rooms.find(room => room.room_id === parseInt(roomId));
                 console.log('Fetched Room:', fetchedRoom);
                 if (fetchedRoom) {
@@ -60,19 +62,26 @@ export const RoomDetail = () => {
                 }
                 setLoading(false);
             } catch (error) {
+                if (!isMountedRef.current) return; // Check if component is still mounted
                 console.error("Error fetching data: ", error);
                 setLoading(false);
             }
         };
 
         fetchData();
+
+        return () => {
+            // Clean up effect
+            isMountedRef.current = false;
+            if (participantsRef.current) {
+                clearInterval(participantsRef.current);
+            }
+        };
     }, [token]);
 
     useEffect(() => {
         const fetchCommentsAndParticipants = async () => {
             await Promise.all([fetchComments(), fetchRequests()]);
-            console.log('Updated Participants:', room.participants);
-            console.log('Updated Comments:', comments);
         };
 
         if (room && room.participants) {
@@ -113,18 +122,27 @@ export const RoomDetail = () => {
         if (showRequests) {
             fetchRequests();
         }
+        return () => {
+            // Clean up effect
+            if (participantsRef.current) {
+                clearInterval(participantsRef.current);
+            }
+        };
     }, [showRequests]);
 
     const checkRequestStatus = async () => {
         let status = await actions.checkRequestStatus(roomId);
+        if (!isMountedRef.current) return; // Check if component is still mounted
         setRequestStatus(status);
     };
 
     const fetchRequests = async () => {
         try {
             const fetchedRequests = await actions.fetchRoomRequests(roomId);
+            if (!isMountedRef.current) return; // Check if component is still mounted
             setRequests(fetchedRequests);
         } catch (error) {
+            if (!isMountedRef.current) return; // Check if component is still mounted
             console.error('Error fetching requests:', error);
         }
     };
@@ -132,8 +150,10 @@ export const RoomDetail = () => {
     const fetchComments = async () => {
         try {
             const fetchedComments = await actions.getComments(roomId);
+            if (!isMountedRef.current) return; // Check if component is still mounted
             setComments(fetchedComments);
         } catch (error) {
+            if (!isMountedRef.current) return; // Check if component is still mounted
             console.error('Error fetching comments:', error);
         }
     };
@@ -183,10 +203,9 @@ export const RoomDetail = () => {
 
         const success = await actions.joinRoom(roomId);
         if (success) {
-            alert('Join request sent successfully!');
-            setRequestStatus('pending');
+            showRoomRequestSentAlert(() => setRequestStatus('pending'));
         } else {
-            alert('Failed to send join request.');
+            showErrorAlert('Error', 'Failed to send join request.');
         }
     };
 
@@ -196,26 +215,46 @@ export const RoomDetail = () => {
             return;
         }
 
-        const success = await actions.updateParticipantStatus(roomId, userId, 'abandoned');
-        if (success) {
-            setRoom(prevRoom => ({
-                ...prevRoom,
-                participants: prevRoom.participants.filter(p => p.participant_id !== userId)
-            }));
-            alert('You have successfully abandoned the room');
-            navigate('/');
-        } else {
-            alert('Failed to abandon the room.');
-        }
+        showLeaveRoomConfirmAlert().then(async (result) => {
+            if (result.isConfirmed) {
+                const success = await actions.updateParticipantStatus(roomId, userId, 'abandoned');
+                if (success) {
+                    setRoom(prevRoom => ({
+                        ...prevRoom,
+                        participants: prevRoom.participants.filter(p => p.participant_id !== userId)
+                    }));
+                    showAutoCloseAlert('Left Room', 'You have successfully left the room.', 2000)
+                        .then(() => navigate('/'));
+                } else {
+                    showErrorAlert('Error', 'Failed to leave the room.');
+                }
+            }
+        });
+    };
+    const handleDeleteRoom = async () => {
+        showDeleteRoomConfirmAlert().then(async (result) => {
+            if (result.isConfirmed) {
+                const success = await actions.deleteRoom(roomId);
+                if (success) {
+                    showAutoCloseAlert('Deleted!', 'The room has been deleted successfully.', 2000)
+                        .then(() => navigate('/'));
+                } else {
+                    showErrorAlert('Error', 'Failed to delete the room.');
+                }
+            }
+        });
     };
 
     const handleWithdrawRequest = async () => {
         const success = await actions.withdrawRequest(roomId);
         if (success) {
-            alert('Request withdrawn successfully!');
+            showAutoCloseAlert('Request Withdrawn Successfully', 'Your request has been withdrawn successfully.', 2000)
+                .then(() => {
+                    navigate('/');
+                });
             setRequestStatus(null);
         } else {
-            alert('Failed to withdraw request.');
+            showErrorAlert('Error', 'Failed to withdraw request.');
         }
     };
 
@@ -270,12 +309,14 @@ export const RoomDetail = () => {
 
     const renderPlatformIcon = (platform) => {
         const iconStyle = { width: '26px', height: '26px', position: 'relative', top: '-5px' };
+        if (!platform) return null;
         switch (platform.toLowerCase()) {
             case 'xbox':
                 return <img src={xboxIcon} alt="Xbox" style={iconStyle} />;
-            case 'switch':
+            case 'nintendo':
                 return <img src={switchIcon} alt="Switch" style={iconStyle} />;
             case 'playstation':
+            case 'Playstation':
                 return <img src={playstationIcon} alt="PlayStation" style={iconStyle} />;
             case 'pc':
                 return <img src={pcIcon} alt="PC" style={iconStyle} />;
@@ -306,6 +347,8 @@ export const RoomDetail = () => {
     const endTime = room.end_time || null;
 
     const formattedDateTime = formatDateTime(startDate, startTime, endDate, endTime);
+    const gameKey = room.game_name ? room.game_name.toLowerCase().replace(/\s+/g, '-') : 'other';
+    const imageSrc = images[gameKey] ? images[gameKey].default : null;
 
     return (
         <div>
@@ -315,7 +358,11 @@ export const RoomDetail = () => {
 
             <div className={`${!isParticipantOrHost ? 'room-detail-small' : 'room-detail'}`}>
                 <div className="room-header">
-                    <img src={fortniteImage} alt="Room Image" className="room-image" />
+                    {imageSrc ? (
+                        <img src={imageSrc} alt={room.game_name} className="room-image" />
+                    ) : (
+                        <p>Image not found</p> // Placeholder if image not found
+                    )}
                     <div className="room-info">
                         <div className='d-flex justify-content-between text-info'>
                             <p>{room.game_name}</p>
@@ -329,11 +376,22 @@ export const RoomDetail = () => {
                             </p>
                         </div>
                         {isHost && (
-                            <div className="room-pills">
-                                <button className={`pill-detail ${currentView === 'details' ? 'active' : ''}`} onClick={() => handleToggleView('details')}>Room Details</button>
-                                <button className={`pill-participants ${currentView === 'participants' ? 'active' : ''}`} onClick={() => handleToggleView('participants')}>
-                                    Members & Requests ({countPendingRequests()})
-                                </button>
+                            <div className="room-pills d-flex align-items-center justify-content-between">
+                                <div>
+                                    <button className={`pill-detail ${currentView === 'details' ? 'active' : ''}`} onClick={() => handleToggleView('details')}>Room Details</button>
+                                    <button className={`pill-participants mx-2 ${currentView === 'participants' ? 'active' : ''}`} onClick={() => handleToggleView('participants')}>
+                                        Members & Requests ({countPendingRequests()})
+                                    </button>
+                                </div>
+                                <div>
+                                    <button className="edit-room-btn " onClick={() => navigate(`/edit-room/${room.room_id}`)} style={{ background: 'none', border: 'none' }}>
+                                        <FaPencilAlt style={{ color: 'white', fontSize: '20px' }} />
+                                    </button>
+                                    <button className="delete-room-btn mr-2" onClick={handleDeleteRoom} style={{ background: 'none', border: 'none' }}>
+                                        <FaTrashAlt style={{ color: 'red', fontSize: '20px' }} />
+                                    </button>
+                                </div>
+
                             </div>
                         )}
                         {currentView === 'details' && (
@@ -343,7 +401,7 @@ export const RoomDetail = () => {
                                 participantsCount={participantsCount}
                                 formattedDateTime={formattedDateTime}
                                 renderPlatformIcon={renderPlatformIcon}
-                                handleKickParticipant={handleKickParticipant}
+                                participants={room.participants}
                                 isHost={isHost}
                             />
                         )}
@@ -352,18 +410,19 @@ export const RoomDetail = () => {
                                 requests={requests}
                                 participants={room.participants} // Asegúrate de pasar los participantes
                                 handleRequestAction={handleRequestAction}
+                                handleKickParticipant={handleKickParticipant}
                             />
                         )}
                     </div>
                 </div>
-                {!isParticipantOrHost && (
-                     <div className="room-actions">
-                     <button className="back-btn btn btn-outline-primary" onClick={() => navigate('/')}>Go Back</button>
-                     {(requestStatus === 'None' || requestStatus === 'abandoned') && (
-                         <button className="join-room" onClick={handleJoinRoom}>Join Room</button>
-                     )}
-                     {requestStatus === 'pending' && <button className='btn-danger withdraw' onClick={handleWithdrawRequest}>Withdraw Request</button>}
-                 </div>
+                {!isHost && (
+                    <div className="room-actions">
+                        <button className="back-btn btn btn-outline-primary" onClick={() => navigate('/')}>Go Back</button>
+                        {(!token || requestStatus === 'None' || requestStatus === 'abandoned') && (
+                            <button className="join-room" onClick={handleJoinRoom}>Join Room</button>
+                        )}
+                        {requestStatus === 'pending' && <button className='btn-danger withdraw' onClick={handleWithdrawRequest}>Withdraw Request</button>}
+                    </div>
                 )}
                 {isParticipantOrHost && (
                     <CommentsSection
@@ -377,11 +436,6 @@ export const RoomDetail = () => {
                         newComment={newComment}
                         setNewComment={setNewComment}
                     />
-                )}
-                {isParticipantOrHost && !isHost && (
-                    <div>
-                        <button onClick={handleAbandonRoom}>Abandon Room</button>
-                    </div>
                 )}
             </div>
         </div>

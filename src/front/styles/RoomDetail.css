@@ -1,5 +1,5 @@
 .room-detail {
-    background-color: #333C53;
+    background-color: #1e1e1e;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     color: #fff;
@@ -12,7 +12,7 @@
 .room-detail-small {
     max-height: 1500px; /* Altura más pequeña para usuarios que no son participantes ni host */
     max-width: 1114px;
-    background-color: #333C53;
+    background-color: #1e1e1e;
     margin: 0 auto;
     font-family: 'Inter', sans-serif;
 }
@@ -108,12 +108,14 @@
 }
 .withdraw {
     background-color:#B40000 ;
+    color: #fff;
     border: none;
     height: 48px;
     padding: 10px 20px;
     border-radius: 8px;
     cursor: pointer;
     font-size: 16px;
+    
 
 }
 
@@ -136,7 +138,34 @@
     background-color: #0096D2;;
 }
 
+.menu-container {
+    position: relative;
+}
 
+.menu {
+    position: absolute;
+    right: 0;
+    top: 20px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.menu button {
+    display: block;
+    width: 100%;
+    padding: 5px;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.menu button:hover {
+    background-color: #f0f0f0;
+}
 
 .exit-button {
     color: #CED4DA;
