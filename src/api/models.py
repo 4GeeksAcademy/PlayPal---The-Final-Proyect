@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import event
 from pytz import timezone
+import pytz
 
 db = SQLAlchemy()
 
@@ -57,7 +58,8 @@ class User(db.Model):
             "is_deleted": self.is_deleted,
             "url_image": self.url_image
         }
-    
+
+
 class Room(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -75,6 +77,7 @@ class Room(db.Model):
     is_deleted = db.Column(db.Boolean, default=False)
     user_timezone = db.Column(db.String, nullable=False)  # Zona horaria del usuario
     room_timezone = db.Column(db.String, nullable=False)  # Zona horaria del room
+    start_datetime_utc = db.Column(db.String, nullable=False)  # Hora de inicio en UTC
 
     room_participants = db.relationship('Room_participant', backref='room', lazy=True)
     comments = db.relationship('Comment', backref='room', lazy=True)
@@ -86,12 +89,6 @@ class Room(db.Model):
 
     def calculate_end_time(self):
         """Calculates and sets the estimated end time based on duration and timezones."""
-        print("Calculating end time...")
-        print("Date:", self.date)
-        print("Time:", self.time)
-        print("Duration:", self.duration)
-        print("User Timezone:", self.user_timezone)
-        print("Room Timezone:", self.room_timezone)
         if self.date and self.time and self.duration and self.user_timezone and self.room_timezone:
             user_tz = timezone(self.user_timezone)
             room_tz = timezone(self.room_timezone)
@@ -100,11 +97,11 @@ class Room(db.Model):
             start_datetime = start_datetime.astimezone(room_tz)
             end_datetime = start_datetime + timedelta(minutes=self.duration)
             self.end_time = end_datetime.strftime('%Y-%m-%d %H:%M')
-            print("Calculated end_time:", self.end_time)
+            self.start_datetime_utc = start_datetime.astimezone(pytz.utc).strftime('%Y-%m-%d %H:%M')
 
     def serialize(self):
         return {
-             "room_id": self.id,
+            "room_id": self.id,
             "user_id": self.user_id,
             "date": self.date,
             "time": self.time,
@@ -118,14 +115,16 @@ class Room(db.Model):
             "room_size": self.room_size,
             "is_deleted": self.is_deleted,
             "user_timezone": self.user_timezone,
-            "room_timezone": self.room_timezone
+            "room_timezone": self.room_timezone,
+            "start_datetime_utc": self.start_datetime_utc
         }
-    
+
 # Event listeners for SQLAlchemy to auto-calculate `end_time`
 @event.listens_for(Room, 'before_insert')
 @event.listens_for(Room, 'before_update')
 def receive_before_insert_or_update(mapper, connection, target):
     target.calculate_end_time()
+
     
     
 class Games(db.Model):

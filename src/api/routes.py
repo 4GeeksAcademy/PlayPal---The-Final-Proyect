@@ -9,6 +9,7 @@ import re
 import os
 from datetime import datetime, timedelta
 from pytz import timezone
+import pytz
 
 from sqlalchemy.exc import SQLAlchemyError
 import jwt
@@ -286,22 +287,22 @@ def get_current_rooms():
 
 
 @api.route('/create_room', methods=['POST'])
-@jwt_required()  # Esta decoración asegura que el usuario esté autenticado con un token JWT válido
+@jwt_required()
 def create_room():
     try:
         current_user_id = get_jwt_identity()
         room_data = request.json
 
-        required_fields = ['date', 'time', 'duration', 'room_name', 'game_id', 'platform', 'description', 'mood', 'room_size', 'user_timezone']
+        required_fields = ['date', 'time', 'duration', 'room_name', 'game_id', 'platform', 'description', 'mood', 'room_size', 'user_timezone', 'utc_start_time']
         for field in required_fields:
             if field not in room_data or not room_data[field]:
                 return jsonify({"error": f"Missing required field: {field}"}), 400
 
         user_tz = timezone(room_data.get('user_timezone'))
-        start_datetime = user_tz.localize(datetime.strptime(f"{room_data.get('date')} {room_data.get('time')}", '%Y-%m-%d %H:%M'))
-        current_datetime = datetime.now(user_tz)
+        utc_start_time = datetime.strptime(room_data.get('utc_start_time'), '%Y-%m-%d %H:%M').replace(tzinfo=timezone('UTC'))
+        current_utc_time = datetime.now(timezone('UTC'))
 
-        if start_datetime < current_datetime:
+        if utc_start_time < current_utc_time:
             return jsonify({"error": "The start time cannot be in the past."}), 400
 
         new_room = Room(
@@ -316,7 +317,8 @@ def create_room():
             mood=room_data.get('mood'),
             room_size=room_data.get('room_size'),
             user_timezone=room_data.get('user_timezone'),
-            room_timezone='UTC'
+            room_timezone='UTC',
+            start_datetime_utc=utc_start_time.strftime('%Y-%m-%d %H:%M')  # Establecer el start_datetime_utc
         )
 
         db.session.add(new_room)
@@ -327,7 +329,6 @@ def create_room():
     except Exception as e:
         logging.error(f"Error creating room: {str(e)}")
         return jsonify({"message": "Failed to create room", "error": str(e)}), 500
-
 
 
 
