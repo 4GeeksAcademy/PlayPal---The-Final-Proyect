@@ -8,10 +8,15 @@ const getState = ({ getStore, getActions, setStore }) => {
             loadingRooms: false,
             user: null,
             requestStatus: null,
-            comments: [] // New state to store comments
+            comments: [], // New state to store comments
+            loading: false, // Estado global de carga
         },
-
         actions: {
+
+            setLoading: (loading) => {
+                setStore({ loading });
+            },
+
             submitLogInForm: async (logInData) => {
                 try {
                     let response = await fetch(`${apiUrl}/api/login`, {

@@ -2,10 +2,11 @@ import React, { useState, useContext, useEffect } from 'react';
 import { Context } from "../store/appContext";
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment-timezone';
-import '../../styles/BuyMeACoffee.css'
+import '../../styles/BuyMeACoffee.css';
 
 import { showSuccessAlert, showErrorAlert } from '../component/alerts.js';
 import '../../styles/Alerts.css'; // Importa las funciones de alerta
+
 export const CreateRoom = () => {
     const { store, actions } = useContext(Context);
     const token = localStorage.getItem('jwt-token');
@@ -93,11 +94,11 @@ export const CreateRoom = () => {
         };
     }, []);
 
+    // Ordenar los juegos alfabéticamente
     const sortedGames = [...store.games].sort((a, b) => a.name.localeCompare(b.name));
 
     return (
         <div>
-
             <div className="coffee-container">
                 {token ? (
                     <div className="container mt-5">
@@ -127,16 +128,10 @@ export const CreateRoom = () => {
                                     required
                                 >
                                     <option value="">Select a game</option>
-
-                                    {store.games.map(game => (
-                                        <option key={game.id} value={game.name}>{game.name}</option>
-                                    ))}
-
                                     {sortedGames.map(game => (
                                         <option key={game.game_id} value={game.name}>{game.name}</option>
                                     ))}
                                     <option value="Other">Other</option> {/* Option Other is always present */}
-
                                 </select>
                             </div>
                             <div className="mb-3">
@@ -164,7 +159,6 @@ export const CreateRoom = () => {
                                 />
                             </div>
                             <div className="mb-3">
-
                                 <label htmlFor="duration" className="form-label">Duration (minutes)</label>
                                 <input
                                     type="number"
@@ -177,7 +171,6 @@ export const CreateRoom = () => {
                                 />
                             </div>
                             <div className="mb-3">
-
                                 <label htmlFor="platform" className="form-label">Platform</label>
                                 <select
                                     className="form-control mx-auto"
@@ -191,9 +184,6 @@ export const CreateRoom = () => {
                                     <option value="Xbox">Xbox</option>
                                     <option value="PlayStation">PlayStation</option>
                                     <option value="PC">PC</option>
-
-                                    <option value="Google Play">Google Play</option>
-
                                     <option value="Nintendo">Nintendo</option>
                                 </select>
                             </div>
@@ -224,7 +214,7 @@ export const CreateRoom = () => {
                                 </select>
                             </div>
                             <div className="mb-3">
-                                <label htmlFor="room_size" className="form-label">Room Size</label>
+                                <label htmlFor="room_size" className="form-label">Available spots not including yourself.</label>
                                 <input
                                     type="number"
                                     className="form-control mx-auto"

@@ -15,6 +15,7 @@ import '../../styles/RoomDetail.css';
 import RoomDetailsView from '../component/RoomInfoComponent.jsx';
 import ParticipantsView from '../component/ParticipantsInfoComponent.jsx';
 import CommentsSection from '../component/CommentsSection.jsx';
+import LoadingScreen from '../component/LoadingScreen.js'
 import { showRoomRequestSentAlert, showErrorAlert, showAutoCloseAlert, showLeaveRoomConfirmAlert, showDeleteRoomConfirmAlert } from '../component/alerts.js'; // Importa las funciones de alerta
 
 
@@ -279,7 +280,7 @@ export const RoomDetail = () => {
     };
 
     if (loading || !room) {
-        return <div>Loading...</div>;
+        return <LoadingScreen />;
     }
 
     const formatDateTime = (startDate, startTime, endDate = null, endTime = null) => {

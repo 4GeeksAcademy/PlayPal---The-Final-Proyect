@@ -1,7 +1,7 @@
 .coffee-container {
     background-color: #0a0e14; /* Fondo oscuro para resaltar colores brillantes */
     color: #ffffff;
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'inter', sans-serif;
     border: 2px solid #0056b3; /* Borde estilizado */
     padding: 20px;
     border-radius: 10px; /* Bordes redondeados para un look moderno */
@@ -63,4 +63,55 @@
     color: white;
     outline: none; /* Elimina el borde de enfoque predeterminado */
     box-shadow: none; /* Elimina la sombra del cuadro de enfoque predeterminado */
+}
+
+/* Estilos específicos para select y option */
+.form-control select {
+    background-color: transparent; /* Fondo transparente para el select */
+    color: white; /* Color del texto en el select */
+}
+
+.form-control option {
+    background-color: #0a0e14; /* Fondo oscuro para las opciones */
+    color: white; /* Color del texto en las opciones */
+}
+
+/* Estilo para inputs de fecha y hora */
+input[type="date"],
+input[type="time"] {
+    background-color: transparent;
+    color: white;
+    padding: 8px 12px;
+    border: 1px solid #0096D2;
+    border-radius: 4px;
+    position: relative;
+    -webkit-appearance: white;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* Ocultar iconos predeterminados y agregar pseudo-elemento */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+    color: white; /* Cambiar el color del icono */
+    opacity: 1; /* Asegurar que el icono sea visible */
+}
+
+/* Ajustes adicionales para compatibilidad en Firefox */
+input[type="date"]::-moz-placeholder,
+input[type="time"]::-moz-placeholder {
+    color: white;
+}
+
+/* Asegurar que el icono sea interactuable */
+input[type="date"],
+input[type="time"] {
+    -webkit-appearance: textfield;
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+input[type="date"]::-webkit-clear-button,
+input[type="time"]::-webkit-clear-button {
+    display: none;
 }

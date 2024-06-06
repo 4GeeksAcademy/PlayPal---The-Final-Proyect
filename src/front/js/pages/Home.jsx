@@ -5,6 +5,7 @@ import { Context } from "../store/appContext";
 import { useNavigate } from 'react-router-dom';
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { showWelcomeAlert } from '../component/alerts.js'
+import LoadingScreen from '../component/LoadingScreen.js'
 import '../../styles/RoomList.css';
 
 export const Home = () => {
@@ -59,7 +60,7 @@ export const Home = () => {
     };
 
     if (store.loadingRooms) {
-        return <div>Loading...</div>;
+        return <LoadingScreen />;
     }
 
     return (

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaEllipsisV } from 'react-icons/fa';
 import xboxIcon from '../../img/xbox.png';
 import switchIcon from '../../img/switch.png';
@@ -34,7 +34,31 @@ const renderPlatformIcon = (platform) => {
 };
 
 const ParticipantsView = ({ requests, participants, handleRequestAction, handleKickParticipant }) => {
+    const [localParticipants, setLocalParticipants] = useState(participants);
+    const [localRequests, setLocalRequests] = useState(requests);
     const [showMenu, setShowMenu] = useState(null);
+
+    useEffect(() => {
+        setLocalParticipants(participants);
+    }, [participants]);
+
+    useEffect(() => {
+        setLocalRequests(requests);
+    }, [requests]);
+
+    const handleAcceptRequest = (requestId) => {
+        const request = localRequests.find(req => req.room_request_id === requestId);
+        if (request) {
+            setLocalParticipants([...localParticipants, request]);
+            setLocalRequests(localRequests.filter(req => req.room_request_id !== requestId));
+            handleRequestAction(requestId, 'accepted');
+        }
+    };
+
+    const handleRejectRequest = (requestId) => {
+        setLocalRequests(localRequests.filter(req => req.room_request_id !== requestId));
+        handleRequestAction(requestId, 'rejected');
+    };
 
     const toggleMenu = (participant_id) => {
         setShowMenu(showMenu === participant_id ? null : participant_id);
@@ -44,7 +68,7 @@ const ParticipantsView = ({ requests, participants, handleRequestAction, handleK
         <div className="participants-view">
             <h3>Participants</h3>
             <div className="">
-                {participants.map(participant => (
+                {localParticipants.map(participant => (
                     <div key={participant.participant_id} className="participant d-flex justify-content-between align-items-center">
                         <div className='align-items-center'>
                             <img
@@ -87,25 +111,23 @@ const ParticipantsView = ({ requests, participants, handleRequestAction, handleK
             </div>
             <h3>Requests</h3>
             <div className="requests-list">
-                {requests.map(request => (
+                {localRequests.map(request => (
                     <div key={request.room_request_id} className="request d-flex justify-content-between align-items-center">
                         <div className='d-flex align-items-center'>
-                        <img
-                            src={request.profile_image_url}
-                            alt={`${request.participant_name}'s profile`}
-                            className="profile-image"
-                        />
-                        <p>
-                            <strong>{request.participant_name}</strong>
-                        </p>
+                            <img
+                                src={request.profile_image_url}
+                                alt={`${request.participant_name}'s profile`}
+                                className="profile-image"
+                            />
+                            <p>
+                                <strong>{request.participant_name}</strong>
+                            </p>
                         </div>
                       
                         <div className="d-flex ">
-                            <button className="join-room mx-3" onClick={() => handleRequestAction(request.room_request_id, 'accepted')}>Accept</button>
-                            <button className="withdraw" onClick={() => handleRequestAction(request.room_request_id, 'rejected')}>Reject</button>
+                            <button className="join-room mx-3" onClick={() => handleAcceptRequest(request.room_request_id)}>Accept</button>
+                            <button className="withdraw" onClick={() => handleRejectRequest(request.room_request_id)}>Reject</button>
                         </div>
-
-
                     </div>
                 ))}
             </div>

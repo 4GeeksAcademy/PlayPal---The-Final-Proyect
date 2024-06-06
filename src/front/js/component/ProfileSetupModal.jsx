@@ -118,7 +118,8 @@ const ProfileSetupModal = ({ show, handleClose, handlePrev, signUpData, setSignU
                                     <option value="">Select</option>
                                     <option value="male">Male</option>
                                     <option value="female">Female</option>
-                                    <option value="other">Other</option>
+                                    <option value="other">Non-binary</option>
+                                    <option value="other">Prefer not to say</option>
                                 </select>
                             </div>
                             <button type="submit" className="btn btn-primary">Complete</button>
